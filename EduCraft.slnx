@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="EduCraft.Application/EduCraft.Application.csproj" />
+  <Project Path="EduCraft.Domain/EduCraft.Domain.csproj" />
+  <Project Path="EduCraft.Infrastructure/EduCraft.Infrastructure.csproj" />
+  <Project Path="EduCraft.Presentation/EduCraft.Presentation.csproj" />
+  <Project Path="EduCraft.Tests/EduCraft.Tests.csproj" />
+</Solution>
