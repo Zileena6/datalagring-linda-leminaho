@@ -1,8 +1,9 @@
-﻿using System;
+﻿using EduCraft.Domain.CourseInstances;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace EduCraft.Domain.Entities;
+namespace EduCraft.Domain.Participants;
 
 public class Student : Participant
 {

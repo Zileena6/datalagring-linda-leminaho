@@ -1,8 +1,11 @@
-﻿using System;
+﻿using EduCraft.Domain.Courses;
+using EduCraft.Domain.Entities;
+using EduCraft.Domain.Participants;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace EduCraft.Domain.Entities;
+namespace EduCraft.Domain.CourseInstances;
 
 public class CourseInstance
 {

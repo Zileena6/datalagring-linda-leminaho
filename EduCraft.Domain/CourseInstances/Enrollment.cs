@@ -1,9 +1,10 @@
 ﻿using EduCraft.Domain.Enums;
+using EduCraft.Domain.Participants;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace EduCraft.Domain.Entities;
+namespace EduCraft.Domain.CourseInstances;
 
 public class Enrollment
 {

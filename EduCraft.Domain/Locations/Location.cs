@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EduCraft.Domain.CourseInstances;
+using System;
 using System.Collections.Generic;
 using System.Text;
 

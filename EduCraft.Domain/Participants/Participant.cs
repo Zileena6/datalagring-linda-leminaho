@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace EduCraft.Domain.Entities;
+namespace EduCraft.Domain.Participants;
 
 public class Participant
 {

@@ -1,8 +1,10 @@
-﻿using System;
+﻿using EduCraft.Domain.CourseInstances;
+using EduCraft.Domain.Courses;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace EduCraft.Domain.Entities;
+namespace EduCraft.Domain.Participants;
 
 public class Instructor : Participant
 {
