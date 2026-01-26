@@ -1,17 +1,26 @@
 ﻿using EduCraft.Domain.CourseInstances;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using EduCraft.Domain.Participants;
 
 namespace EduCraft.Domain.Courses;
 
 public class Course
 {
-    public int Id { get; set; }
-    public string CourseCode { get; set; } = string.Empty;
-    public string CourseName { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
+    public Course(CourseId id, string courseCode, string courseName, string description)
+    {
+        Id = id;
+        CourseCode = courseCode;
+        CourseName = courseName;
+        Description = description;
+    }
 
-    public ICollection<CourseInstance> Instances { get; set; } = new List<CourseInstance>();
+    private Course() { }
 
+    private readonly List<CourseInstance> _courseInstances = new();
+
+    public CourseId Id { get; private set; } = null!;
+    public string CourseCode { get; private set; } = string.Empty;
+    public string CourseName { get; private set; } = string.Empty;
+    public string Description { get; private set; } = string.Empty;
+
+    public virtual IReadOnlyCollection<CourseInstance> CourseInstances => _courseInstances.AsReadOnly();
 }
