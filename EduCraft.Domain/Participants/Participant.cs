@@ -1,16 +1,26 @@
 ﻿using EduCraft.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EduCraft.Domain.Participants;
 
-public class Participant
+public abstract class Participant
 {
-    public Guid Id { get; set; }
-    public string FirstName { get; set; } = string.Empty;
-    public string LastName { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string PhoneNumber { get; set; } = string.Empty;
-    public ParticipantRole Role { get; set; }
+    protected Participant(ParticipantId id, string firstName, string lastName, string email, string? phoneNumber, ParticipantRole role) 
+    {
+        Id = id;
+        FirstName = firstName;
+        LastName = lastName;
+        Email = email;
+        PhoneNumber = phoneNumber;
+        Role = role;
+    }
+
+    protected Participant() { }
+
+    public ParticipantId Id { get; private set; } = null!;
+    public string FirstName { get; private set; } = string.Empty;
+    public string LastName { get; private set; } = string.Empty;
+    public string Email { get; private set; } = string.Empty;
+    public string? PhoneNumber { get; private set; } = string.Empty;
+    public ParticipantRole Role { get; private set; }
 }
+

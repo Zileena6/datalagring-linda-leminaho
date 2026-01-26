@@ -1,29 +1,53 @@
 ﻿using EduCraft.Domain.Courses;
 using EduCraft.Domain.Entities;
+using EduCraft.Domain.Locations;
 using EduCraft.Domain.Participants;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EduCraft.Domain.CourseInstances;
 
 public class CourseInstance
 {
-    public int Id { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public int Capacity {  get; set; }
+    public CourseInstance(CourseInstanceId id, DateTime startDate, DateTime endDate, int capacity, string courseCode, Location location )
+    {
+        Id = id;
+        StartDate = startDate;
+        EndDate = endDate;
+        Capacity = capacity;
+        CourseCode = courseCode;
+        Location = location;
+    }
 
-    public required string CourseCode { get; set; }
-    public Course Course { get; set; } = null!;
+    private CourseInstance() { }
 
-    public int LocationId { get; set; }
-    public Location Location { get; set; } = null!;
+    private readonly List<Instructor> _instructors = new();
+    private readonly List<Enrollment> _enrollments = new();
 
-    public ICollection<Instructor> Instructors { get; set; } = new List<Instructor>();
+    public CourseInstanceId Id { get; private set; } = null!;
+    public DateTime StartDate { get; private set; }
+    public DateTime EndDate { get; private set; }
+    public int Capacity {  get; private set; }
 
+    public string CourseCode { get; private set; } = null!;
+    public Course Course { get; private set; } = null!;
+    public ParticipantId InstructorId { get; private set; } = null!;
 
-    public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+    public LocationId LocationId { get; private set; } = null!;
+    public Location Location { get; private set; } = null!;
 
-    //public bool IsFull => Enrollments.Count >= Capacity;
+    // create courseInstance? add participants?
+    public static CourseInstance Create(ParticipantId instructorId)
+    {
+        var instance = new CourseInstance
+        {
+            Id = new CourseInstanceId(Guid.NewGuid()),
+            InstructorId = instructorId,
+            // add confirmed students
+            // capacity: 40 students
+        };
+
+        return instance;
+    }
+
+    public virtual IReadOnlyCollection<Instructor> Instructors => _instructors.AsReadOnly();
+    public virtual IReadOnlyCollection<Enrollment> Enrollments => _enrollments.AsReadOnly();
 }

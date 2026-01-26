@@ -1,21 +1,30 @@
 ﻿using EduCraft.Domain.Enums;
 using EduCraft.Domain.Participants;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EduCraft.Domain.CourseInstances;
 
 public class Enrollment
 {
-    public int Id { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt {  get; set; } = DateTime.UtcNow;
-    public EnrollmentStatus Status { get; set; }
+    public Enrollment(EnrollmentId id, DateTime createdAt, DateTime updatedAt, EnrollmentStatus status, ParticipantId studentId, Student student, CourseInstanceId courseInstanceId, CourseInstance courseInstance)
+    {
+        Id = id;
+        CreatedAt = createdAt;
+        UpdatedAt = updatedAt;
+        Status = status;
+        StudentId = studentId;
+        CourseInstanceId = courseInstanceId;
+    }
 
-    public Guid StudentId { get; set; }
-    public Student Student { get; set; } = null!;
+    private Enrollment() { }
 
-    public int CourseInstanceId { get; set; }
-    public CourseInstance CourseInstance { get; set; } = null!;
+    public EnrollmentId Id { get; private set; } = null!;
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; protected set; } = DateTime.UtcNow;
+    public EnrollmentStatus Status { get; private set; }
+
+    public ParticipantId StudentId { get; private set; } = null!;
+    public Student Student { get; private set; } = null!;
+
+    public CourseInstanceId CourseInstanceId { get; private set; } = null!;
+    public CourseInstance CourseInstance { get; private set; } = null!;
 }

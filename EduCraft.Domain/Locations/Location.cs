@@ -1,14 +1,22 @@
 ﻿using EduCraft.Domain.CourseInstances;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using EduCraft.Domain.Locations;
 
 namespace EduCraft.Domain.Entities;
 
 public class Location
 {
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
+    public Location(LocationId id, string name)
+    {
+        Id = id; 
+        Name = name;
+    }
 
-    public ICollection<CourseInstance> CourseInstances { get; set; } = new List<CourseInstance>();
+    private Location() { }
+
+    private readonly List<CourseInstance> _courseInstances = new();
+
+    public LocationId Id { get; private set; } = null!;
+    public string Name { get; private set; } = string.Empty;
+
+    public virtual IReadOnlyCollection<CourseInstance> CourseInstances => _courseInstances.AsReadOnly();
 }
