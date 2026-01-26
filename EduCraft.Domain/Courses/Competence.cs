@@ -14,8 +14,18 @@ public class Competence
 
     private readonly List<Instructor> _instructors = new();
 
-    public CompetenceId Id { get; private set; } = null!;
+    public CompetenceId Id { get; private set; }
     public string Expertise { get; private set; } = string.Empty;
 
     public virtual IReadOnlyCollection<Instructor> Instructors => _instructors.AsReadOnly();
+
+    public void AddInstructor(Instructor instructor)
+    {
+        ArgumentNullException.ThrowIfNull(instructor);
+
+        if (!_instructors.Any(i => i.Id == instructor.Id))
+        {
+            _instructors.Add(instructor);
+        }
+    }
 }

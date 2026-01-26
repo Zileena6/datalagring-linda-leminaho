@@ -32,7 +32,7 @@ public class EnrollmentConfiguration : IEntityTypeConfiguration<Enrollment>
             value => new CourseInstanceId(value));
 
         builder.HasOne(e => e.CourseInstance)
-            .WithMany()
-            .HasForeignKey(e => e.CourseInstance);
+            .WithMany(e => e.Enrollments)
+            .HasForeignKey(e => e.CourseInstanceId);
     }
 }

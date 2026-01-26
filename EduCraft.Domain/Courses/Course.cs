@@ -1,5 +1,4 @@
 ﻿using EduCraft.Domain.CourseInstances;
-using EduCraft.Domain.Participants;
 
 namespace EduCraft.Domain.Courses;
 
@@ -17,7 +16,7 @@ public class Course
 
     private readonly List<CourseInstance> _courseInstances = new();
 
-    public CourseId Id { get; private set; } = null!;
+    public CourseId Id { get; private set; }
     public string CourseCode { get; private set; } = string.Empty;
     public string CourseName { get; private set; } = string.Empty;
     public string Description { get; private set; } = string.Empty;
