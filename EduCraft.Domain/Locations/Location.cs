@@ -1,7 +1,6 @@
 ﻿using EduCraft.Domain.CourseInstances;
-using EduCraft.Domain.Locations;
 
-namespace EduCraft.Domain.Entities;
+namespace EduCraft.Domain.Locations;
 
 public class Location
 {
@@ -13,10 +12,7 @@ public class Location
 
     private Location() { }
 
-    private readonly List<CourseInstance> _courseInstances = new();
-
-    public LocationId Id { get; private set; } = null!;
+    public LocationId Id { get; private set; }
     public string Name { get; private set; } = string.Empty;
 
-    public virtual IReadOnlyCollection<CourseInstance> CourseInstances => _courseInstances.AsReadOnly();
 }

@@ -16,7 +16,7 @@ public abstract class Participant
 
     protected Participant() { }
 
-    public ParticipantId Id { get; private set; } = null!;
+    public ParticipantId Id { get; private set; }
     public string FirstName { get; private set; } = string.Empty;
     public string LastName { get; private set; } = string.Empty;
     public string Email { get; private set; } = string.Empty;

@@ -1,4 +1,5 @@
 ﻿using EduCraft.Domain.CourseInstances;
+using EduCraft.Domain.Locations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,7 +12,7 @@ namespace EduCraft.Infrastructure.Configurations
             builder.HasKey(c => c.Id);
 
             builder.Property(c => c.Id).HasConversion(
-                courseInstanceId => courseInstanceId.Value,
+                id => id.Value,
                 value => new CourseInstanceId(value));
 
             builder.HasOne(c => c.Course)
@@ -19,6 +20,9 @@ namespace EduCraft.Infrastructure.Configurations
                 .HasPrincipalKey(c => c.CourseCode)
                 .HasForeignKey(c => c.CourseCode)
                 .IsRequired();
+
+            builder.Property(c => c.LocationId)
+                .HasConversion(id => id.Value, value => new LocationId(value));
 
             builder.HasOne(c => c.Location)
                 .WithMany()

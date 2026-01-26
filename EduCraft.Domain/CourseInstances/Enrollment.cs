@@ -5,7 +5,7 @@ namespace EduCraft.Domain.CourseInstances;
 
 public class Enrollment
 {
-    public Enrollment(EnrollmentId id, DateTime createdAt, DateTime updatedAt, EnrollmentStatus status, ParticipantId studentId, Student student, CourseInstanceId courseInstanceId, CourseInstance courseInstance)
+    public Enrollment(EnrollmentId id, DateTime createdAt, DateTime updatedAt, EnrollmentStatus status, ParticipantId studentId, CourseInstanceId courseInstanceId)
     {
         Id = id;
         CreatedAt = createdAt;
@@ -17,14 +17,14 @@ public class Enrollment
 
     private Enrollment() { }
 
-    public EnrollmentId Id { get; private set; } = null!;
+    public EnrollmentId Id { get; private set; }
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; protected set; } = DateTime.UtcNow;
     public EnrollmentStatus Status { get; private set; }
 
-    public ParticipantId StudentId { get; private set; } = null!;
+    public ParticipantId StudentId { get; private set; }
     public Student Student { get; private set; } = null!;
 
-    public CourseInstanceId CourseInstanceId { get; private set; } = null!;
+    public CourseInstanceId CourseInstanceId { get; private set; }
     public CourseInstance CourseInstance { get; private set; } = null!;
 }

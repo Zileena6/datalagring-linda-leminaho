@@ -1,6 +1,4 @@
-﻿
-using EduCraft.Domain.Entities;
-using EduCraft.Domain.Locations;
+﻿using EduCraft.Domain.Locations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,7 +11,7 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
         builder.HasKey(l => l.Id);
 
         builder.Property(l => l.Id).HasConversion(
-            locationId => locationId.Value,
+            id => id.Value,
             value => new LocationId(value));
 
         builder.Property(l => l.Name)
