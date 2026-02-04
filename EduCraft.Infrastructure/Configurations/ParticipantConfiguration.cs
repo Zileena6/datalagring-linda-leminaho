@@ -32,5 +32,7 @@ public class ParticipantConfiguration : IEntityTypeConfiguration<Participant>
             .HasConversion<string>()
             .HasMaxLength(20)
             .IsRequired();
+
+        builder.Property(p => p.RowVersion).IsRowVersion();
     }
 }

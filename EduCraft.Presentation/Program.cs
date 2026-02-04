@@ -1,38 +1,53 @@
 
+using EduCraft.Application.DTOs.Participants;
+using EduCraft.Application.Interfaces;
+using EduCraft.Application.Services.Participants;
+using EduCraft.Domain.Interfaces;
 using EduCraft.Infrastructure;
+using EduCraft.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(connectionString);
 });
 
+builder.Services.AddScoped<IParticipantRepository, ParticipantRepository>();
+builder.Services.AddScoped<IParticipantQueries, ParticipantRepository>();
+builder.Services.AddScoped<IParticipantService, ParticipantService>();
+
+builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddValidation();
+
 var app = builder.Build();
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var dbContext = scope.ServiceProvider
-//        .GetRequiredService<ApplicationDbContext>();
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+}
 
-//    if (!dbContext.Database.CanConnect())
-//    {
-//        throw new NotImplementedException("Can't connect to DB");
-//    }
-//}
+app.MapGet("/api/participants", async (
+    IParticipantService service, CancellationToken ct)
+    => Results.Ok(await service.GetAllParticipantsAsync(ct)));
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.MapOpenApi();
-//}
+app.MapPost("/api/participants", async(
+    CreateParticipantDTO dto,
+    IParticipantService participantService,
+    CancellationToken cancellationToken
+) =>
+{
+    var participant = await participantService.CreateParticipantAsync( dto, cancellationToken );
 
-//app.UseHttpsRedirection();
+    return Results.Created(
+        $"/api/participants/{participant.Id}",
+        participant
+    );
+});
 
 app.Run();

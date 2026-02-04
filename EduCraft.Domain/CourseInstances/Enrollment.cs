@@ -27,4 +27,6 @@ public class Enrollment
 
     public CourseInstanceId CourseInstanceId { get; private set; }
     public CourseInstance CourseInstance { get; private set; } = null!;
+
+    public byte[] RowVersion { get; private set; } = null!;
 }

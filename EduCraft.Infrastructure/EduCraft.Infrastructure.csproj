@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EduCraft.Application\EduCraft.Application.csproj" />
     <ProjectReference Include="..\EduCraft.Domain\EduCraft.Domain.csproj" />
   </ItemGroup>
 

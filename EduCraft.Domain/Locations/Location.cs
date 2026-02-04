@@ -15,4 +15,6 @@ public class Location
     public LocationId Id { get; private set; }
     public string Name { get; private set; } = string.Empty;
 
+    public byte[] RowVersion { get; private set; } = null!;
+
 }
