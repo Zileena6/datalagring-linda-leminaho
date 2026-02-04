@@ -1,8 +1,10 @@
 ﻿using EduCraft.Domain.Enums;
+using EduCraft.Domain.Interfaces;
+using EduCraft.Domain.Primitives;
 
 namespace EduCraft.Domain.Participants;
 
-public abstract class Participant
+public abstract class Participant : BaseEntity<ParticipantId>, IAggregateRoot
 {
     protected Participant(ParticipantId id, string firstName, string lastName, string email, string? phoneNumber, ParticipantRole role) 
     {
@@ -16,11 +18,11 @@ public abstract class Participant
 
     protected Participant() { }
 
-    public ParticipantId Id { get; private set; }
     public string FirstName { get; private set; } = string.Empty;
     public string LastName { get; private set; } = string.Empty;
     public string Email { get; private set; } = string.Empty;
     public string? PhoneNumber { get; private set; } = string.Empty;
     public ParticipantRole Role { get; private set; }
+
 }
 

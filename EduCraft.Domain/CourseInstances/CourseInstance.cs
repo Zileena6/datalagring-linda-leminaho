@@ -32,6 +32,8 @@ public class CourseInstance
     public LocationId LocationId { get; private set; }
     public virtual Location Location { get; private set; } = null!;
 
+    public byte[] RowVersion { get; private set; } = null!;
+
     public virtual IReadOnlyCollection<Instructor> Instructors => _instructors.AsReadOnly();
     public virtual IReadOnlyCollection<Enrollment> Enrollments => _enrollments.AsReadOnly();
 }

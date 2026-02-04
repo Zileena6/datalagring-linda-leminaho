@@ -17,6 +17,8 @@ public class Competence
     public CompetenceId Id { get; private set; }
     public string Expertise { get; private set; } = string.Empty;
 
+    public byte[] RowVersion { get; private set; } = null!;
+
     public virtual IReadOnlyCollection<Instructor> Instructors => _instructors.AsReadOnly();
 
     public void AddInstructor(Instructor instructor)
