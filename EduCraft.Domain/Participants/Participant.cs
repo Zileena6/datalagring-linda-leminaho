@@ -6,6 +6,31 @@ namespace EduCraft.Domain.Participants;
 
 public abstract class Participant : BaseEntity<ParticipantId>, IAggregateRoot
 {
+    public static Participant Create(
+        string firstName, 
+        string lastName, 
+        string email, 
+        string? phoneNumber, 
+        ParticipantRole role
+    )
+    {
+        var id = ParticipantId.New();
+
+        if (string.IsNullOrWhiteSpace(firstName))
+            throw new ArgumentException("First name is required");
+
+        if (string.IsNullOrWhiteSpace(email))
+            throw new ArgumentException("Email is required");
+
+        return role switch
+        {
+            ParticipantRole.Instructor => new Instructor(id, firstName, lastName, email, phoneNumber),
+            ParticipantRole.Student => new Student(id, firstName, lastName, email, phoneNumber),
+            _ => throw new ArgumentException("Invalid role")
+        };
+    }
+
+
     protected Participant(ParticipantId id, string firstName, string lastName, string email, string? phoneNumber, ParticipantRole role) 
     {
         Id = id;

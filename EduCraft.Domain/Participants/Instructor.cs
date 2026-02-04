@@ -5,7 +5,7 @@ namespace EduCraft.Domain.Participants;
 
 public class Instructor : Participant
 {
-    public Instructor(ParticipantId id, string firstName, string lastName, string email, string? phoneNumber) : base(id, firstName, lastName, email, phoneNumber, ParticipantRole.Instructor) { }
+    internal Instructor(ParticipantId id, string firstName, string lastName, string email, string? phoneNumber) : base(id, firstName, lastName, email, phoneNumber, ParticipantRole.Instructor) { }
 
     private Instructor() : base() { }
 

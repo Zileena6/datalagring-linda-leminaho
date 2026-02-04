@@ -1,8 +1,11 @@
 ﻿using EduCraft.Domain.CourseInstances;
+using EduCraft.Domain.Interfaces;
+using EduCraft.Domain.Participants;
+using EduCraft.Domain.Primitives;
 
 namespace EduCraft.Domain.Courses;
 
-public class Course
+public class Course : BaseEntity<CourseId>, IAggregateRoot
 {
     public Course(CourseId id, string courseCode, string courseName, DateTime createdAt, DateTime updatedAt, string description)
     {
@@ -18,14 +21,14 @@ public class Course
 
     private readonly List<CourseInstance> _courseInstances = new();
 
-    public CourseId Id { get; set; }
+    //public CourseId Id { get; set; }
     public string CourseCode { get; set; } = string.Empty;
     public string CourseName { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
-    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; protected set; } = DateTime.UtcNow;
+    //public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+    //public DateTime? UpdatedAt { get; protected set; } = DateTime.UtcNow;
 
-    public byte[] RowVersion { get; set; } = null!;
+    //public byte[] RowVersion { get; set; } = null!;
 
     public virtual IReadOnlyCollection<CourseInstance> CourseInstances => _courseInstances.AsReadOnly();
 }

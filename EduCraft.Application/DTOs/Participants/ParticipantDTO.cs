@@ -16,4 +16,6 @@ public record ParticipantDTO
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ParticipantRole Role { get; init; }
+
+    public byte[] RowVersion { get; init; } = [];
 }

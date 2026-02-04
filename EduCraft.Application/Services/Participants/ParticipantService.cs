@@ -9,11 +9,60 @@ public class ParticipantService(IParticipantRepository repository, IParticipantQ
 {
     public async Task<ParticipantDTO> CreateParticipantAsync(CreateParticipantDTO dto, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var participant = Participant.Create(
+            dto.FirstName,
+            dto.LastName,
+            dto.Email,
+            dto.PhoneNumber,
+            dto.Role
+            );
+
+        await repository.CreateAsync(participant, cancellationToken);
+
+        //return new ParticipantDTO
+        //{
+        //    Id = participant.Id.Value,
+        //    FirstName = participant.FirstName,
+        //    LastName = participant.LastName,
+        //    Email = participant.Email,
+        //    PhoneNumber = participant.PhoneNumber,
+        //    Role = participant.Role,
+
+        //};
+
+        return MapToDTO([participant]).First();
     }
 
-    public Task<IEnumerable<ParticipantDTO>> GetAllParticipantsAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<ParticipantDTO>> GetAllParticipantsAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var participants = await queries.GetAllAsync(cancellationToken);
+
+        return MapToDTO(participants);
+    }
+
+    private static IEnumerable<ParticipantDTO> MapToDTO(IEnumerable<Participant> participants)
+    {
+        return participants.Select(p => p switch
+        {
+            Instructor i => new InstructorDTO
+            {
+                Id = i.Id.Value,
+                FirstName = i.FirstName,
+                LastName = i.LastName,
+                Email = i.Email,
+                PhoneNumber = i.PhoneNumber,
+                Role = i.Role,
+            },
+            _ => new ParticipantDTO
+            {
+                Id = p.Id.Value,
+                FirstName = p.FirstName,
+                LastName = p.LastName,
+                Email = p.Email,
+                PhoneNumber = p.PhoneNumber,
+                Role = p.Role,
+            }
+        }
+        );
     }
 }
