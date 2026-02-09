@@ -1,8 +1,8 @@
-﻿using EduCraft.Domain.Courses;
+﻿using EduCraft.Domain.Entities.Courses;
 
 namespace EduCraft.Domain.Interfaces;
 
-public interface ICourseRepository : IBaseRepository<Course>
+public interface ICourseRepository : IBaseRepository<Course, CourseId>
 {
-    Task<Course> CreateAsync(Course course);
+    Task<bool> ExistsByCourseName(string courseName, CancellationToken cancellationToken);
 }

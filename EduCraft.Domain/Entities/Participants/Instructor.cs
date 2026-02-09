@@ -1,7 +1,7 @@
-﻿using EduCraft.Domain.Courses;
+﻿using EduCraft.Domain.Entities.Courses;
 using EduCraft.Domain.Enums;
 
-namespace EduCraft.Domain.Participants;
+namespace EduCraft.Domain.Entities.Participants;
 
 public class Instructor : Participant
 {
@@ -11,7 +11,5 @@ public class Instructor : Participant
 
     private readonly List<Competence> _competences = new();
 
-
     public virtual IReadOnlyCollection<Competence> Competences => _competences.AsReadOnly();
-   
 }

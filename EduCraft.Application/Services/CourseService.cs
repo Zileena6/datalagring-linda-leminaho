@@ -1,39 +1,44 @@
-﻿using EduCraft.Application.DTOs.Courses;
+﻿
+using EduCraft.Application.DTOs.Courses;
 using EduCraft.Application.Helpers;
-using EduCraft.Application.Mappers;
-using EduCraft.Domain.Courses;
+using EduCraft.Application.Interfaces;
+using EduCraft.Domain.Entities.Courses;
 using EduCraft.Domain.Interfaces;
 
 namespace EduCraft.Application.Services;
 
-public class CourseService(ICourseRepository courseRepository)
-{
-    private readonly ICourseRepository _courseRepository = courseRepository;
-
-    public async Task<ResponseResult<CourseDto>> CreateCourseAsync(CreateCourseDto dto)
+public class CourseService(ICourseRepository courseRepository) : ICourseService
+{   
+    public async Task<CourseDTO> CreateCourseAsync(CreateCourseDTO dto, CancellationToken cancellationToken)
     {
-        //if (await _courseRepository.ExistsAsync(c => c.CourseCode == dto.CourseCode))
-        //    return ResponseResult<CourseDto>.Conflict($"Course with code {dto.CourseCode} already exists");
+        var course = Course.Create(
+            dto.CourseCode,
+            dto.CourseName,
+            dto.Description
+        );
 
-        //var savedCourse = await _courseRepository.CreateAsync(new Course { CourseCode = dto.CourseCode, CourseName = dto.CourseName, Description = dto.Description });
-        //return ResponseResult<CourseDto>.OK(CourseMapper.ToCourseDto(savedCourse));
+        await courseRepository.AddAsync(course, cancellationToken);
 
-        throw new NotImplementedException();
+        return MapToDTO(course);
     }
 
-    public async Task<ResponseResult<IEnumerable<CourseDto>>> GetAllCoursesAsync()
+    public async Task<IEnumerable<CourseDTO>> GetAllCoursesAsync(CancellationToken cancellationToken)
     {
-        //var courses = await _courseRepository.GetAllAsync();
-        //return ResponseResult<IEnumerable<CourseDto>>.OK(courses.Select(c => new CourseDto
-        //{
-        //    Id = c.Id,
-        //    CourseCode = c.CourseCode,
-        //    CourseName = c.CourseName,
-        //    CreatedAt = c.CreatedAt,
-        //    UpdatedAt = c.UpdatedAt,
-        //    Description = c.Description,
-        //}));
+        var courses = await courseRepository.GetAllAsync(cancellationToken);
 
-        throw new NotImplementedException();
+        return [.. courses.Select(MapToDTO)];
+    }
+
+    private static CourseDTO MapToDTO(Course course)
+    {
+        return new CourseDTO
+        {
+            Id = course.Id.Value,
+            CourseCode = course.CourseCode,
+            CourseName = course.CourseName,
+            Description = course.Description
+        };
     }
 }
+
+// update and delete

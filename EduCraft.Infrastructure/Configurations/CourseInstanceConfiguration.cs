@@ -1,5 +1,5 @@
-﻿using EduCraft.Domain.CourseInstances;
-using EduCraft.Domain.Locations;
+﻿using EduCraft.Domain.Entities.CourseInstances;
+using EduCraft.Domain.Entities.Locations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

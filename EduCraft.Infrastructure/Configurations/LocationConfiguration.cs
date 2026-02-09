@@ -1,4 +1,4 @@
-﻿using EduCraft.Domain.Locations;
+﻿using EduCraft.Domain.Entities.Locations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -14,7 +14,7 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
             id => id.Value,
             value => new LocationId(value));
 
-        builder.Property(l => l.Name)
+        builder.Property(l => l.LocationName)
             .HasMaxLength(50)
             .IsRequired();
     }

@@ -2,7 +2,7 @@
 using EduCraft.Domain.Interfaces;
 using EduCraft.Domain.Primitives;
 
-namespace EduCraft.Domain.Participants;
+namespace EduCraft.Domain.Entities.Participants;
 
 public abstract class Participant : BaseEntity<ParticipantId>, IAggregateRoot
 {
@@ -16,8 +16,8 @@ public abstract class Participant : BaseEntity<ParticipantId>, IAggregateRoot
     {
         var id = ParticipantId.New();
 
-        if (string.IsNullOrWhiteSpace(firstName))
-            throw new ArgumentException("First name is required");
+        if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
+            throw new ArgumentException("Name is required");
 
         if (string.IsNullOrWhiteSpace(email))
             throw new ArgumentException("Email is required");
@@ -29,7 +29,6 @@ public abstract class Participant : BaseEntity<ParticipantId>, IAggregateRoot
             _ => throw new ArgumentException("Invalid role")
         };
     }
-
 
     protected Participant(ParticipantId id, string firstName, string lastName, string email, string? phoneNumber, ParticipantRole role) 
     {
@@ -48,6 +47,5 @@ public abstract class Participant : BaseEntity<ParticipantId>, IAggregateRoot
     public string Email { get; private set; } = string.Empty;
     public string? PhoneNumber { get; private set; } = string.Empty;
     public ParticipantRole Role { get; private set; }
-
 }
 

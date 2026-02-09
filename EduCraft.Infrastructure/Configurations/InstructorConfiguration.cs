@@ -1,4 +1,4 @@
-﻿using EduCraft.Domain.Participants;
+﻿using EduCraft.Domain.Entities.Participants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

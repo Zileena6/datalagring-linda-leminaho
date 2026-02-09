@@ -20,14 +20,14 @@ public class ResponseResult<T>
         => new() { Status = ResultStatus.Ok };
 
     public static ResponseResult<T> OK(T data)
-    => new() { Status = ResultStatus.Ok, Data = data };
+        => new() { Status = ResultStatus.Ok, Data = data };
 
     public static ResponseResult<T> NotFound(string message)
-    => new() { Status = ResultStatus.NotFound, Message = message };
+        => new() { Status = ResultStatus.NotFound, Message = message };
 
     public static ResponseResult<T> Conflict(string message)
-    => new() { Status = ResultStatus.Conflict, Message = message };
+        => new() { Status = ResultStatus.Conflict, Message = message };
 
     public static ResponseResult<T> BadRequest(string message, IReadOnlyList<string>? errors = null)
-    => new() { Status = ResultStatus.BadRequest, Message = message, Errors = errors };
+        => new() { Status = ResultStatus.BadRequest, Message = message, Errors = errors };
 }

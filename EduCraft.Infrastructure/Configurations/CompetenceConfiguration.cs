@@ -1,5 +1,4 @@
-﻿
-using EduCraft.Domain.Courses;
+﻿using EduCraft.Domain.Entities.Courses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,7 +14,7 @@ public class CompetenceConfiguration : IEntityTypeConfiguration<Competence>
             competenceId => competenceId.Value,
             value => new CompetenceId(value));
 
-        builder.Property(c => c.Expertise)
+        builder.Property(c => c.CompetenceName)
             .HasMaxLength(20)
             .IsRequired();
 

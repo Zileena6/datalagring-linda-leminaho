@@ -1,4 +1,4 @@
-﻿using EduCraft.Domain.Courses;
+﻿using EduCraft.Domain.Entities.Courses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

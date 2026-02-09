@@ -1,5 +1,4 @@
-﻿
-namespace EduCraft.Domain.CourseInstances;
+﻿namespace EduCraft.Domain.Entities.CourseInstances;
 
 public readonly record struct EnrollmentId
 {
