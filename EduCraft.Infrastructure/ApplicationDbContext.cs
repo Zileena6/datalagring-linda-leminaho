@@ -1,7 +1,7 @@
-﻿using EduCraft.Domain.CourseInstances;
-using EduCraft.Domain.Courses;
-using EduCraft.Domain.Locations;
-using EduCraft.Domain.Participants;
+﻿using EduCraft.Domain.Entities.CourseInstances;
+using EduCraft.Domain.Entities.Courses;
+using EduCraft.Domain.Entities.Locations;
+using EduCraft.Domain.Entities.Participants;
 using Microsoft.EntityFrameworkCore;
 
 namespace EduCraft.Infrastructure;

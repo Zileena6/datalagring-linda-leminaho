@@ -1,5 +1,5 @@
-﻿using EduCraft.Domain.Interfaces;
-using EduCraft.Domain.Participants;
+﻿using EduCraft.Domain.Entities.Participants;
+using EduCraft.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace EduCraft.Infrastructure.Repositories;

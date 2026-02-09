@@ -1,5 +1,4 @@
-﻿
-namespace EduCraft.Domain.Participants;
+﻿namespace EduCraft.Domain.Entities.Participants;
 
 public readonly record struct ParticipantId
 { 

@@ -2,7 +2,7 @@
 
 namespace EduCraft.Application.DTOs.Courses;
 
-public class CreateCourseDto
+public class CreateCourseDTO
 {
     [Required]
     [MinLength(1)]

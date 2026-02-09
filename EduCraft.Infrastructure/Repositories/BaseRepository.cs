@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EduCraft.Infrastructure.Repositories;
 
-
 public abstract class BaseRepository<TEntity, TId>(ApplicationDbContext context) where TEntity : BaseEntity<TId>, IAggregateRoot
 {
     protected readonly ApplicationDbContext _context = context;
@@ -14,7 +13,7 @@ public abstract class BaseRepository<TEntity, TId>(ApplicationDbContext context)
         return await _context.Set<TEntity>().AnyAsync(e => e.Id!.Equals(id), cancellationToken);
     }
 
-    public virtual async Task CreateAsync(TEntity entity, CancellationToken cancellationToken)
+    public virtual async Task AddAsync(TEntity entity, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(entity, nameof(entity));
         await _context.Set<TEntity>().AddAsync(entity, cancellationToken);
@@ -32,9 +31,9 @@ public abstract class BaseRepository<TEntity, TId>(ApplicationDbContext context)
     public virtual async Task<TEntity?> GetByIdAsync(TId id, CancellationToken cancellationToken)
         => await _context.Set<TEntity>().FirstOrDefaultAsync(e => e.Id!.Equals(id), cancellationToken);
 
-    public virtual async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken)
+    public virtual async Task UpdateAsync(TEntity entity, byte[] rowVersion, CancellationToken cancellationToken)
     {
-        _context.Set<TEntity>().Update(entity);
+        _context.Entry(entity).Property("RowVersion").OriginalValue = rowVersion;
         await _context.SaveChangesAsync(cancellationToken);
     }
 

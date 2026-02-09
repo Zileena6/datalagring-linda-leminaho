@@ -1,3 +1,3 @@
 ﻿namespace EduCraft.Application.DTOs.Participants;
 
-public record AddCompetenceDTO(string ExpertiseName);
+public record AddCompetenceDTO(string CompetenceName);

@@ -1,9 +1,9 @@
-﻿using EduCraft.Domain.Courses;
+﻿using EduCraft.Domain.Entities.Courses;
 
 namespace EduCraft.Application.DTOs.Courses;
 
 public record CompetenceDTO
 {
     public CompetenceId Id { get; init; }
-    public string Expertise { get; init; } = string.Empty;
+    public string CompetenceName { get; init; } = string.Empty;
 }

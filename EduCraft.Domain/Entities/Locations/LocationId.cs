@@ -1,5 +1,4 @@
-﻿
-namespace EduCraft.Domain.Locations;
+﻿namespace EduCraft.Domain.Entities.Locations;
 
 public readonly record struct LocationId
 {

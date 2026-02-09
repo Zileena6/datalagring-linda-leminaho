@@ -1,4 +1,4 @@
-﻿using EduCraft.Domain.Participants;
+﻿using EduCraft.Domain.Entities.Participants;
 
 namespace EduCraft.Domain.Interfaces;
 

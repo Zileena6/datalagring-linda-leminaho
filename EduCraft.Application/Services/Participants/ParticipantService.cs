@@ -1,7 +1,7 @@
 ﻿using EduCraft.Application.DTOs.Participants;
 using EduCraft.Application.Interfaces;
+using EduCraft.Domain.Entities.Participants;
 using EduCraft.Domain.Interfaces;
-using EduCraft.Domain.Participants;
 
 namespace EduCraft.Application.Services.Participants;
 
@@ -17,18 +17,7 @@ public class ParticipantService(IParticipantRepository repository, IParticipantQ
             dto.Role
             );
 
-        await repository.CreateAsync(participant, cancellationToken);
-
-        //return new ParticipantDTO
-        //{
-        //    Id = participant.Id.Value,
-        //    FirstName = participant.FirstName,
-        //    LastName = participant.LastName,
-        //    Email = participant.Email,
-        //    PhoneNumber = participant.PhoneNumber,
-        //    Role = participant.Role,
-
-        //};
+        await repository.AddAsync(participant, cancellationToken);
 
         return MapToDTO([participant]).First();
     }
@@ -52,6 +41,7 @@ public class ParticipantService(IParticipantRepository repository, IParticipantQ
                 Email = i.Email,
                 PhoneNumber = i.PhoneNumber,
                 Role = i.Role,
+                RowVersion = i.RowVersion,
             },
             _ => new ParticipantDTO
             {
@@ -61,8 +51,8 @@ public class ParticipantService(IParticipantRepository repository, IParticipantQ
                 Email = p.Email,
                 PhoneNumber = p.PhoneNumber,
                 Role = p.Role,
+                RowVersion = p.RowVersion,
             }
-        }
-        );
+        });
     }
 }

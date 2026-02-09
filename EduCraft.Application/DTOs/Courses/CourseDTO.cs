@@ -1,10 +1,10 @@
-﻿using EduCraft.Domain.Courses;
+﻿using EduCraft.Domain.Entities.Courses;
 
 namespace EduCraft.Application.DTOs.Courses;
 
-public class CourseDto
+public class CourseDTO
 {
-    public CourseId Id { get; init; }
+    public Guid Id { get; init; }
     public string? CourseCode { get; init; }
     public string? CourseName { get; init; }
     public string? Description { get; init; }

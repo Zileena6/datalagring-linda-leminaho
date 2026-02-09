@@ -1,7 +1,7 @@
-﻿using EduCraft.Domain.Enums;
-using EduCraft.Domain.Participants;
+﻿using EduCraft.Domain.Entities.Participants;
+using EduCraft.Domain.Enums;
 
-namespace EduCraft.Domain.CourseInstances;
+namespace EduCraft.Domain.Entities.CourseInstances;
 
 public class Enrollment
 {
