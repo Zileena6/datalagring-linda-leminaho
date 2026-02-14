@@ -1,13 +1,14 @@
-﻿using EduCraft.Application.DTOs.Courses;
-using EduCraft.Application.DTOs.Participants;
+﻿using EduCraft.Application.DTOs.Competences;
 
 namespace EduCraft.Application.Interfaces;
 
 public interface ICompetenceService
 {
-    Task<IEnumerable<CompetenceDTO>> GetAllCompetencesAsync(CancellationToken cancellationToken);
-
     Task<CompetenceDTO> AddCompetenceAsync(AddCompetenceDTO dto, CancellationToken cancellationToken);
 
-    // GetById, update, delete
+    Task<IEnumerable<CompetenceDTO>> GetAllCompetencesAsync(CancellationToken cancellationToken);
+
+    Task<CompetenceDTO> UpdateCompetenceAsync(Guid id, UpdateCompetenceDTO dto, CancellationToken cancellationToken);
+
+    Task DeleteCompetenceAsync(Guid id, CancellationToken cancellationToken);
 }

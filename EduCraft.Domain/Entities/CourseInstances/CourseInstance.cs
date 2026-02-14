@@ -16,8 +16,6 @@ public class CourseInstance : BaseEntity<CourseInstanceId>, IAggregateRoot
         LocationId locationId
     )
     {
-        var id = CourseInstanceId.New();
-
         if (endDate < startDate)
             throw new ArgumentException("End date cannot be before start date.");
 

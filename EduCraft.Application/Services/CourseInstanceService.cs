@@ -29,6 +29,18 @@ public class CourseInstanceService(ICourseInstanceRepository courseInstanceRepos
         return [.. courseInstances.Select(MapToDTO)];
     }
 
+    // update
+    public Task<CourseInstanceDTO> UpdateCourseInstanceAsync(Guid id, UpdateCourseInstanceDTO dto, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    // delete
+    public Task DeleteCourseInstanceAsync(Guid id, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+    
     private static CourseInstanceDTO MapToDTO(CourseInstance courseInstance)
     {
         return new CourseInstanceDTO

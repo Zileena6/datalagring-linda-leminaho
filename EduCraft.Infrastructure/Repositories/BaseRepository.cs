@@ -20,7 +20,6 @@ public abstract class BaseRepository<TEntity, TId>(ApplicationDbContext context)
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-
     public virtual async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
         return await _context.Set<TEntity>()

@@ -6,9 +6,16 @@ namespace EduCraft.Infrastructure.Repositories;
 
 public class ParticipantRepository(ApplicationDbContext context) : BaseRepository<Participant, ParticipantId>(context), IParticipantRepository, IParticipantQueries
 {
-    public Task<Participant?> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    public async Task<Participant?> GetByEmailAsync(string email, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _context.Set<Participant>()
+            .FirstOrDefaultAsync(p => p.Email == email, cancellationToken);
+    }
+
+    public async Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        return await _context.Set<Participant>()
+            .AnyAsync(p => p.Email == email, cancellationToken);
     }
 
     public override async Task<IEnumerable<Participant>> GetAllAsync(CancellationToken cancellationToken)

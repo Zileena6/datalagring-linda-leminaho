@@ -27,5 +27,7 @@ public class CourseConfiguration : IEntityTypeConfiguration<Course>
         builder.Property(c => c.Description)
             .HasMaxLength(200)
             .IsRequired();
+
+        builder.Property(c => c.RowVersion).IsRowVersion();
     }
 }

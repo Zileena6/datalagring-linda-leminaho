@@ -5,7 +5,7 @@ using EduCraft.Domain.Interfaces;
 
 namespace EduCraft.Application.Services;
 
-public class LocationService(ILocationRepository locationRepository) : ILocationService
+public class LocationService(ILocationRepository repository) : ILocationService
 {
     public async Task<LocationDTO> AddLocationAsync(AddLocationDTO dto, CancellationToken cancellationToken)
     {
@@ -13,16 +13,32 @@ public class LocationService(ILocationRepository locationRepository) : ILocation
             dto.LocationName
             );
 
-        await locationRepository.AddAsync(location, cancellationToken);
+        await repository.AddAsync(location, cancellationToken);
 
         return MapToDTO(location);
     }
 
     public async Task<IEnumerable<LocationDTO>> GetAllLocationsAsync(CancellationToken cancellationToken)
     {
-        var locations = await locationRepository.GetAllAsync(cancellationToken);
+        var locations = await repository.GetAllAsync(cancellationToken);
 
         return [.. locations.Select(MapToDTO)];
+    }
+
+    // update
+    public Task<LocationDTO> UpdateLocationAsync(Guid id, UpdateLocationDTO dto, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task DeleteLocationAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var locationId = new LocationId(id);
+
+        var deleted = await repository.DeleteAsync(locationId, cancellationToken);
+
+        if (!deleted)
+            throw new KeyNotFoundException($"Location with id {id} was not found.");
     }
 
     private static LocationDTO MapToDTO(Location location)
@@ -33,4 +49,5 @@ public class LocationService(ILocationRepository locationRepository) : ILocation
             LocationName = location.LocationName,
         };
     }
+
 }
