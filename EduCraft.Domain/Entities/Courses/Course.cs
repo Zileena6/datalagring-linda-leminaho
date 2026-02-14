@@ -24,6 +24,23 @@ public class Course : BaseEntity<CourseId>, IAggregateRoot
         return new Course(CourseId.New(), courseCode, courseName, description);
     }
 
+    public void Update(
+        string courseName, 
+        string description
+    )
+    {
+        if (string.IsNullOrWhiteSpace(courseName))
+            throw new ArgumentException("Course name is required");
+
+        if (string.IsNullOrWhiteSpace(description))
+            throw new ArgumentException("Course description is required");
+
+        CourseName = courseName;
+        Description = description;
+
+        UpdateTimeStamp();
+    }
+
     protected Course(CourseId id, string courseCode, string courseName, string description)
     {
         Id = id;
@@ -36,9 +53,9 @@ public class Course : BaseEntity<CourseId>, IAggregateRoot
 
     private readonly List<CourseInstance> _courseInstances = new();
 
-    public string CourseCode { get; set; } = string.Empty;
-    public string CourseName { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
+    public string CourseCode { get; private set; } = string.Empty;
+    public string CourseName { get; private set; } = string.Empty;
+    public string Description { get; private set; } = string.Empty;
 
     public virtual IReadOnlyCollection<CourseInstance> CourseInstances => _courseInstances.AsReadOnly();
 }

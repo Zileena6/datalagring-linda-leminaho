@@ -1,13 +1,11 @@
 ﻿using EduCraft.Domain.Entities.Courses;
 using EduCraft.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EduCraft.Infrastructure.Repositories;
 
 public class CourseRepository(ApplicationDbContext context) : BaseRepository<Course, CourseId>(context), ICourseRepository
 {
-
-    public Task<bool> ExistsByCourseName(string courseName, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<bool> ExistsByCourseName(string courseName, CancellationToken cancellationToken) =>
+        await _context.Courses.AnyAsync(c => c.CourseName == courseName, cancellationToken);
 }

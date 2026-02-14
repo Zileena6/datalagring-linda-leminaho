@@ -30,6 +30,19 @@ public abstract class Participant : BaseEntity<ParticipantId>, IAggregateRoot
         };
     }
 
+    public void Update(
+        string firstName,
+        string lastName,
+        string email,
+        string? phoneNumber
+    )
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        Email = email;
+        PhoneNumber = phoneNumber;
+    }
+
     protected Participant(ParticipantId id, string firstName, string lastName, string email, string? phoneNumber, ParticipantRole role) 
     {
         Id = id;
@@ -45,7 +58,7 @@ public abstract class Participant : BaseEntity<ParticipantId>, IAggregateRoot
     public string FirstName { get; private set; } = string.Empty;
     public string LastName { get; private set; } = string.Empty;
     public string Email { get; private set; } = string.Empty;
-    public string? PhoneNumber { get; private set; } = string.Empty;
+    public string? PhoneNumber { get; private set; }
     public ParticipantRole Role { get; private set; }
 }
 

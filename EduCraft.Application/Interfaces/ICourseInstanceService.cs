@@ -4,9 +4,11 @@ namespace EduCraft.Application.Interfaces;
 
 public interface ICourseInstanceService
 {
-    Task<IEnumerable<CourseInstanceDTO>> GetAllCourseInstancesAsync(CancellationToken cancellationToken);
-
     Task<CourseInstanceDTO> CreateCourseInstanceAsync(CreateCourseInstanceDTO dto, CancellationToken cancellationToken);
 
-    // GetBy location, id, courseCode ?, update, delete
+    Task<IEnumerable<CourseInstanceDTO>> GetAllCourseInstancesAsync(CancellationToken cancellationToken);
+
+    Task<CourseInstanceDTO> UpdateCourseInstanceAsync(Guid id, UpdateCourseInstanceDTO dto, CancellationToken cancellationToken);
+
+    Task DeleteCourseInstanceAsync(Guid id, CancellationToken cancellationToken);
 }

@@ -21,12 +21,63 @@ public class ParticipantService(IParticipantRepository repository, IParticipantQ
 
         return MapToDTO([participant]).First();
     }
+    public async Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken)
+    {
+        return await repository.ExistsByEmailAsync(email, cancellationToken);
+    }
 
     public async Task<IEnumerable<ParticipantDTO>> GetAllParticipantsAsync(CancellationToken cancellationToken)
     {
         var participants = await queries.GetAllAsync(cancellationToken);
 
         return MapToDTO(participants);
+    }
+
+    public async Task<ParticipantDTO> GetParticipantByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var participantId = new ParticipantId(id);
+
+        var participant = await repository.GetByIdAsync(participantId, cancellationToken) ?? 
+            throw new KeyNotFoundException($"Participant with id {id} was not found.");
+
+        return MapToDTO([participant]).First();
+    }
+
+    public async Task<ParticipantDTO> UpdateParticipantAsync(
+        Guid id,
+        UpdateParticipantDTO dto,
+        CancellationToken cancellationToken)
+    {
+        var participantId = new ParticipantId(id);
+
+        var participant = await repository.GetByIdAsync(participantId, cancellationToken) ?? 
+            throw new KeyNotFoundException($"Participant with id {id} was not found.");
+
+        var exists = await repository.ExistsByEmailAsync(dto.Email, cancellationToken);
+
+        if (exists && participant.Email != dto.Email)
+            throw new InvalidOperationException("Email already exists");
+
+        participant.Update(
+            dto.FirstName,
+            dto.LastName,
+            dto.Email,
+            dto.PhoneNumber
+        );
+
+        await repository.UpdateAsync(participant, dto.RowVersion, cancellationToken);
+
+        return MapToDTO([participant]).First();
+    }
+
+    public async Task DeleteParticipantAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var participantId = new ParticipantId(id);
+
+        var deleted = await repository.DeleteAsync(participantId, cancellationToken);
+
+        if (!deleted)
+            throw new KeyNotFoundException($"Participant with id {id} was not found.");
     }
 
     private static IEnumerable<ParticipantDTO> MapToDTO(IEnumerable<Participant> participants)

@@ -1,4 +1,4 @@
-﻿using EduCraft.Application.DTOs.Courses;
+﻿using EduCraft.Application.DTOs.Competences;
 using System.Text.Json.Serialization;
 
 namespace EduCraft.Application.DTOs.Participants;
