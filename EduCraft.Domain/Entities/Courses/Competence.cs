@@ -16,6 +16,18 @@ public class Competence : BaseEntity<CompetenceId>, IAggregateRoot
         return new Competence(CompetenceId.New(), name);
     }
 
+    public void Update(
+        string competenceName    
+    )
+    {
+        if (string.IsNullOrWhiteSpace(competenceName))
+            throw new ArgumentException("Course name is required");
+
+        CompetenceName = competenceName;
+
+        UpdateTimeStamp();
+    }
+
     protected Competence(CompetenceId id, string name)
     {
         Id = id;

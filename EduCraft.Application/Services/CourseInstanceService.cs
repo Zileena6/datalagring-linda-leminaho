@@ -5,7 +5,7 @@ using EduCraft.Domain.Interfaces;
 
 namespace EduCraft.Application.Services;
 
-public class CourseInstanceService(ICourseInstanceRepository courseInstanceRepository) : ICourseInstanceService
+public class CourseInstanceService(ICourseInstanceRepository repository) : ICourseInstanceService
 {
     public async Task<CourseInstanceDTO> CreateCourseInstanceAsync(CreateCourseInstanceDTO dto, CancellationToken cancellationToken)
     {
@@ -17,28 +17,45 @@ public class CourseInstanceService(ICourseInstanceRepository courseInstanceRepos
             dto.LocationId
         );
 
-        await courseInstanceRepository.AddAsync( courseInstance, cancellationToken );
+        await repository.AddAsync( courseInstance, cancellationToken );
 
         return MapToDTO(courseInstance);
     }
 
     public async Task<IEnumerable<CourseInstanceDTO>> GetAllCourseInstancesAsync(CancellationToken cancellationToken)
     {
-        var courseInstances = await courseInstanceRepository.GetAllAsync(cancellationToken);
+        var courseInstances = await repository.GetAllAsync(cancellationToken);
 
         return [.. courseInstances.Select(MapToDTO)];
     }
 
-    // update
-    public Task<CourseInstanceDTO> UpdateCourseInstanceAsync(Guid id, UpdateCourseInstanceDTO dto, CancellationToken cancellationToken)
+    public async Task<CourseInstanceDTO> UpdateCourseInstanceAsync(Guid id, UpdateCourseInstanceDTO dto, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var courseInstanceId = new CourseInstanceId(id);
+
+        var courseInstance = await repository.GetByIdAsync(courseInstanceId, cancellationToken) ??
+            throw new ArgumentException($"CourseInstance with id {id} was not found.");
+
+        courseInstance.Update(
+            dto.StartDate,
+            dto.EndDate,
+            dto.Capacity,
+            dto.LocationId
+        );
+
+        await repository.UpdateAsync(courseInstance, dto.RowVersion, cancellationToken);
+
+        return MapToDTO(courseInstance);
     }
 
-    // delete
-    public Task DeleteCourseInstanceAsync(Guid id, CancellationToken cancellationToken)
+    public async Task DeleteCourseInstanceAsync(Guid id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var courseInstanceId = new CourseInstanceId(id);
+
+        var deleted = await repository.DeleteAsync(courseInstanceId, cancellationToken);
+
+        if (!deleted)
+            throw new ArgumentException($"CourseInstance with id {id} was not found.");
     }
     
     private static CourseInstanceDTO MapToDTO(CourseInstance courseInstance)

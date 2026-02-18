@@ -38,7 +38,7 @@ public class ParticipantService(IParticipantRepository repository, IParticipantQ
         var participantId = new ParticipantId(id);
 
         var participant = await repository.GetByIdAsync(participantId, cancellationToken) ?? 
-            throw new KeyNotFoundException($"Participant with id {id} was not found.");
+            throw new ArgumentException($"Participant with id {id} was not found.");
 
         return MapToDTO([participant]).First();
     }
@@ -51,7 +51,7 @@ public class ParticipantService(IParticipantRepository repository, IParticipantQ
         var participantId = new ParticipantId(id);
 
         var participant = await repository.GetByIdAsync(participantId, cancellationToken) ?? 
-            throw new KeyNotFoundException($"Participant with id {id} was not found.");
+            throw new ArgumentException($"Participant with id {id} was not found.");
 
         var exists = await repository.ExistsByEmailAsync(dto.Email, cancellationToken);
 
@@ -77,7 +77,7 @@ public class ParticipantService(IParticipantRepository repository, IParticipantQ
         var deleted = await repository.DeleteAsync(participantId, cancellationToken);
 
         if (!deleted)
-            throw new KeyNotFoundException($"Participant with id {id} was not found.");
+            throw new ArgumentException($"Participant with id {id} was not found.");
     }
 
     private static IEnumerable<ParticipantDTO> MapToDTO(IEnumerable<Participant> participants)
@@ -105,5 +105,12 @@ public class ParticipantService(IParticipantRepository repository, IParticipantQ
                 RowVersion = p.RowVersion,
             }
         });
+    }
+
+    public async Task<IEnumerable<ParticipantDTO>> GetAllStudentsAsync(CancellationToken cancellationToken)
+    {
+        var students = await queries.GetAllStudentsAsync(cancellationToken);
+
+        return MapToDTO(students);
     }
 }

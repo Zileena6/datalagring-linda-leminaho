@@ -29,10 +29,10 @@ public class CourseService(ICourseRepository repository) : ICourseService
 
     public async Task<CourseDTO> UpdateCourseAsync(Guid id, UpdateCourseDTO dto, CancellationToken cancellationToken)
     {
-        var courseId = new CourseId(dto.Id);
+        var courseId = new CourseId(id);
 
         var course = await repository.GetByIdAsync(courseId, cancellationToken) ?? 
-            throw new KeyNotFoundException($"Course with id {dto.Id} was not found.");
+            throw new ArgumentException($"Course with id {id} was not found.");
 
         course.Update(
             dto.CourseName,
@@ -51,7 +51,7 @@ public class CourseService(ICourseRepository repository) : ICourseService
         var deleted = await repository.DeleteAsync(courseId, cancellationToken);
 
         if (!deleted)
-            throw new KeyNotFoundException($"Course with id {id} was not found.");
+            throw new ArgumentException($"Course with id {id} was not found.");
     }
 
     private static CourseDTO MapToDTO(Course course)

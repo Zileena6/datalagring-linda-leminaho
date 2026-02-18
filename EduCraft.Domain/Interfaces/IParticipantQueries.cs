@@ -7,4 +7,5 @@ public interface IParticipantQueries
     Task<IEnumerable<Participant>> GetAllAsync(CancellationToken cancellationToken);
     // get all instructors, get instructors by competence?
     // get all students
+    Task<IEnumerable<Student>> GetAllStudentsAsync(CancellationToken cancellationToken);
 }

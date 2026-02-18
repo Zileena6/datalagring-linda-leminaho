@@ -25,10 +25,19 @@ public class LocationService(ILocationRepository repository) : ILocationService
         return [.. locations.Select(MapToDTO)];
     }
 
-    // update
-    public Task<LocationDTO> UpdateLocationAsync(Guid id, UpdateLocationDTO dto, CancellationToken cancellationToken)
+    public async Task<LocationDTO> UpdateLocationAsync(Guid id, UpdateLocationDTO dto, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var locationId = new LocationId(id);
+
+        var location = await repository.GetByIdAsync(locationId, cancellationToken) ??
+            throw new ArgumentException($"Location with id {id} was not found.");
+
+        location.Update(
+            dto.LocationName);
+
+        await repository.UpdateAsync(location, dto.RowVersion, cancellationToken);
+
+        return MapToDTO(location);
     }
 
     public async Task DeleteLocationAsync(Guid id, CancellationToken cancellationToken)
@@ -38,7 +47,7 @@ public class LocationService(ILocationRepository repository) : ILocationService
         var deleted = await repository.DeleteAsync(locationId, cancellationToken);
 
         if (!deleted)
-            throw new KeyNotFoundException($"Location with id {id} was not found.");
+            throw new ArgumentException($"Location with id {id} was not found.");
     }
 
     private static LocationDTO MapToDTO(Location location)

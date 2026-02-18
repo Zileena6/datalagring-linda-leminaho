@@ -34,5 +34,7 @@ public class EnrollmentConfiguration : IEntityTypeConfiguration<Enrollment>
         builder.HasOne(e => e.CourseInstance)
             .WithMany(e => e.Enrollments)
             .HasForeignKey(e => e.CourseInstanceId);
+
+        builder.Property(e => e.RowVersion).IsRowVersion();
     }
 }

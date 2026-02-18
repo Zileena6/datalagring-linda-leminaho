@@ -33,4 +33,9 @@ public class ParticipantRepository(ApplicationDbContext context) : BaseRepositor
 
         return instructors.Cast<Participant>().Concat(students);
     }
+
+    public async Task<IEnumerable<Student>> GetAllStudentsAsync(CancellationToken cancellationToken)
+    {
+        return await _context.Students.AsNoTracking().ToListAsync(cancellationToken);
+    }
 }

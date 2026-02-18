@@ -15,6 +15,18 @@ public class Location : BaseEntity<LocationId>, IAggregateRoot
         return new Location(LocationId.New(), name);
     }
 
+    public void Update(
+        string name    
+    )
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Location name is required");
+
+        LocationName = name;
+
+        UpdateTimeStamp();
+    }
+
     protected Location(LocationId id, string name)
     {
         Id = id; 
