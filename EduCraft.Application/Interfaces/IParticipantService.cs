@@ -8,6 +8,8 @@ public interface IParticipantService
 
     Task<IEnumerable<ParticipantDTO>> GetAllParticipantsAsync(CancellationToken cancellationToken);
 
+    Task<IEnumerable<ParticipantDTO>> GetAllStudentsAsync(CancellationToken cancellationToken);
+
     Task<ParticipantDTO> GetParticipantByIdAsync(Guid id, CancellationToken cancellationToken);
 
     Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken);

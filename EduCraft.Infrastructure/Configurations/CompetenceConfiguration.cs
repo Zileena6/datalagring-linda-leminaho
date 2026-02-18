@@ -24,5 +24,7 @@ public class CompetenceConfiguration : IEntityTypeConfiguration<Competence>
 
         builder.Metadata.FindNavigation(nameof(Competence.Instructors))?
             .SetPropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.Property(c => c.RowVersion).IsRowVersion();
     }
 }

@@ -17,5 +17,7 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
         builder.Property(l => l.LocationName)
             .HasMaxLength(50)
             .IsRequired();
+
+        builder.Property(l => l.RowVersion).IsRowVersion();
     }
 }

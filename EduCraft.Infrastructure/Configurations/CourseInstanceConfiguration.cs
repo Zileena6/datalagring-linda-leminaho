@@ -46,6 +46,8 @@ namespace EduCraft.Infrastructure.Configurations
             builder.Property(t => t.StartDate).IsRequired();
             builder.Property(t => t.EndDate).IsRequired();
             builder.Property(c => c.Capacity).IsRequired();
+
+            builder.Property(c => c.RowVersion).IsRowVersion();
         }
     }
 }

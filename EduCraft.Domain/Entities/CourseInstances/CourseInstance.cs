@@ -35,7 +35,35 @@ public class CourseInstance : BaseEntity<CourseInstanceId>, IAggregateRoot
             );
     }
 
-    protected CourseInstance(CourseInstanceId id, DateTime startDate, DateTime endDate, int capacity, string courseCode, LocationId locationId )
+    public void Update(
+        DateTime startDate,
+        DateTime endDate,
+        int capacity,
+        LocationId locationId
+    )
+    {
+        if (endDate < startDate) 
+            throw new ArgumentException("End date cannot be before start date.");
+
+        if (capacity <= 0 || capacity > 40)
+            throw new ArgumentException("Capacity must be greater than zero and max 40.");
+
+        StartDate = startDate;
+        EndDate = endDate;
+        Capacity = capacity;
+        LocationId = locationId;
+
+        UpdateTimeStamp();
+    }
+
+    protected CourseInstance(
+        CourseInstanceId id, 
+        DateTime startDate, 
+        DateTime endDate, 
+        int capacity, 
+        string courseCode, 
+        LocationId locationId
+    )
     {
         Id = id;
         StartDate = startDate;

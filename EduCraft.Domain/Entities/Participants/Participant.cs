@@ -41,6 +41,8 @@ public abstract class Participant : BaseEntity<ParticipantId>, IAggregateRoot
         LastName = lastName;
         Email = email;
         PhoneNumber = phoneNumber;
+
+        UpdateTimeStamp();
     }
 
     protected Participant(ParticipantId id, string firstName, string lastName, string email, string? phoneNumber, ParticipantRole role) 

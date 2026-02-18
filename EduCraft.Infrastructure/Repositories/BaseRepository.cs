@@ -30,9 +30,18 @@ public abstract class BaseRepository<TEntity, TId>(ApplicationDbContext context)
     public virtual async Task<TEntity?> GetByIdAsync(TId id, CancellationToken cancellationToken)
         => await _context.Set<TEntity>().FirstOrDefaultAsync(e => e.Id!.Equals(id), cancellationToken);
 
-    public virtual async Task UpdateAsync(TEntity entity, byte[] rowVersion, CancellationToken cancellationToken)
+    public virtual async Task UpdateAsync(TEntity entity, byte[]? rowVersion, CancellationToken cancellationToken)
     {
-        _context.Entry(entity).Property("RowVersion").OriginalValue = rowVersion;
+        if (rowVersion is null || rowVersion.Length == 0)
+            throw new ArgumentException("RowVersion is required.", nameof(rowVersion));
+
+        var entry = _context.Entry(entity);
+
+        if (entry.State == EntityState.Detached)
+            _context.Attach(entity);
+
+        entry.Property("RowVersion").OriginalValue = rowVersion;
+
         await _context.SaveChangesAsync(cancellationToken);
     }
 

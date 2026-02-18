@@ -25,10 +25,20 @@ public class CompetenceService(ICompetenceRepository repository) : ICompetenceSe
         return [.. competences.Select(MapToDTO)];
     }
 
-    // update
-    public Task<CompetenceDTO> UpdateCompetenceAsync(Guid id, UpdateCompetenceDTO dto, CancellationToken cancellationToken)
+    public async Task<CompetenceDTO> UpdateCompetenceAsync(Guid id, UpdateCompetenceDTO dto, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var competenceId = new CompetenceId(id);
+
+        var competence = await repository.GetByIdAsync(competenceId, cancellationToken) ??
+            throw new ArgumentException($"Competence with id {id} was not found.");
+
+        competence.Update(
+            dto.CompetenceName    
+        );
+
+        await repository.UpdateAsync(competence, dto.RowVersion, cancellationToken);
+
+        return MapToDTO(competence);
     }
 
     public async Task DeleteCompetenceAsync(Guid id, CancellationToken cancellationToken)
@@ -38,7 +48,7 @@ public class CompetenceService(ICompetenceRepository repository) : ICompetenceSe
         var deleted = await repository.DeleteAsync(competenceId, cancellationToken);
 
         if (!deleted)
-            throw new KeyNotFoundException($"Competence with id {id} was not found.");
+            throw new ArgumentException($"Competence with id {id} was not found.");
     }
 
     private static CompetenceDTO MapToDTO(Competence competence)

@@ -8,7 +8,10 @@ public interface ICompetenceService
 
     Task<IEnumerable<CompetenceDTO>> GetAllCompetencesAsync(CancellationToken cancellationToken);
 
-    Task<CompetenceDTO> UpdateCompetenceAsync(Guid id, UpdateCompetenceDTO dto, CancellationToken cancellationToken);
+    Task<CompetenceDTO> UpdateCompetenceAsync(
+        Guid id, 
+        UpdateCompetenceDTO dto, 
+        CancellationToken cancellationToken);
 
     Task DeleteCompetenceAsync(Guid id, CancellationToken cancellationToken);
 }
