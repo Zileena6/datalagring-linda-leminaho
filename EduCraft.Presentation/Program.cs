@@ -83,7 +83,7 @@ participants.MapGet("/students", async (
     IParticipantService service, CancellationToken ct) =>
 Results.Ok(await service.GetAllStudentsAsync(ct)));
 
-participants.MapPut("/{id:guid}", async (
+participants.MapPatch("/{id:guid}", async (
     Guid id,
     UpdateParticipantDTO dto,
     IParticipantService service,
@@ -125,7 +125,7 @@ app.MapGet("/api/courses", async (
     ICourseService service, CancellationToken ct)
     => Results.Ok(await service.GetAllCoursesAsync(ct)));
 
-app.MapPut("/api/courses/{id:guid}", async (
+app.MapPatch("/api/courses/{id:guid}", async (
     Guid id,
     UpdateCourseDTO dto,
     ICourseService service,
@@ -150,12 +150,12 @@ app.MapDelete("/api/courses/{id:guid}", async (
 #region competences
 
 app.MapPost("/api/competences", async (
-    AddCompetenceDTO dto,
+    CreateCompetenceDTO dto,
     ICompetenceService service,
     CancellationToken ct
 ) =>
 {
-    var competence = await service.AddCompetenceAsync(dto, ct);
+    var competence = await service.CreateCompetenceAsync(dto, ct);
 
     return Results.Created(
         $"/api/competences/{competence.Id}",
@@ -167,7 +167,7 @@ app.MapGet("/api/competences", async (
     ICompetenceService service, CancellationToken ct)
     => Results.Ok(await service.GetAllCompetencesAsync(ct)));
 
-app.MapPut("/api/competences/{id:guid}", async (
+app.MapPatch("/api/competences/{id:guid}", async (
     Guid id,
     UpdateCompetenceDTO dto,
     ICompetenceService service,
@@ -192,12 +192,12 @@ app.MapDelete("/api/competences/{id:guid}", async (
 #region locations
 
 app.MapPost("/api/locations", async (
-    AddLocationDTO dto,
+    CreateLocationDTO dto,
     ILocationService service,
     CancellationToken ct
 ) =>
 {
-    var location = await service.AddLocationAsync(dto, ct);
+    var location = await service.CreateLocationAsync(dto, ct);
 
     return Results.Created(
         $"/api/locations/{location.Id}",
@@ -209,7 +209,7 @@ app.MapGet("/api/locations", async (
     ILocationService service, CancellationToken ct)
     => Results.Ok(await service.GetAllLocationsAsync(ct)));
 
-app.MapPut("/api/locations/{id:guid}", async (
+app.MapPatch("/api/locations/{id:guid}", async (
     Guid id,
     UpdateLocationDTO dto,
     ILocationService service,
@@ -251,7 +251,7 @@ app.MapGet("/api/courseInstances", async (
     ICourseInstanceService service, CancellationToken ct)
     => Results.Ok(await service.GetAllCourseInstancesAsync(ct)));
 
-app.MapPut("/api/courseInstances/{id:guid}", async (
+app.MapPatch("/api/courseInstances/{id:guid}", async (
     Guid id,
     UpdateCourseInstanceDTO dto,
     ICourseInstanceService service,

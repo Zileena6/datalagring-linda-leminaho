@@ -4,7 +4,7 @@ namespace EduCraft.Application.Interfaces;
 
 public interface ICompetenceService
 {
-    Task<CompetenceDTO> AddCompetenceAsync(AddCompetenceDTO dto, CancellationToken cancellationToken);
+    Task<CompetenceDTO> CreateCompetenceAsync(CreateCompetenceDTO dto, CancellationToken cancellationToken);
 
     Task<IEnumerable<CompetenceDTO>> GetAllCompetencesAsync(CancellationToken cancellationToken);
 

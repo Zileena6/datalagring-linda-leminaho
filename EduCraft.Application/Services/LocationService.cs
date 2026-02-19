@@ -7,7 +7,7 @@ namespace EduCraft.Application.Services;
 
 public class LocationService(ILocationRepository repository) : ILocationService
 {
-    public async Task<LocationDTO> AddLocationAsync(AddLocationDTO dto, CancellationToken cancellationToken)
+    public async Task<LocationDTO> CreateLocationAsync(CreateLocationDTO dto, CancellationToken cancellationToken)
     {
         var location = Location.Create(
             dto.LocationName
@@ -56,6 +56,7 @@ public class LocationService(ILocationRepository repository) : ILocationService
         {
             Id = location.Id,
             LocationName = location.LocationName,
+            RowVersion = location.RowVersion,
         };
     }
 
