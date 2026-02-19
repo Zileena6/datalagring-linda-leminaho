@@ -15,5 +15,5 @@ public record UpdateParticipantDTO
 
     public string? PhoneNumber { get; init; }
 
-    public byte[]? RowVersion { get; init; }
+    public byte[] RowVersion { get; init; } = default!;
 }

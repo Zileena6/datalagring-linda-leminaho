@@ -7,7 +7,7 @@ namespace EduCraft.Application.Services;
 
 public class CompetenceService(ICompetenceRepository repository) : ICompetenceService
 {
-    public async Task<CompetenceDTO> AddCompetenceAsync(AddCompetenceDTO dto, CancellationToken cancellationToken)
+    public async Task<CompetenceDTO> CreateCompetenceAsync(CreateCompetenceDTO dto, CancellationToken cancellationToken)
     {
         var competence = Competence.Create(
             dto.CompetenceName
@@ -57,6 +57,7 @@ public class CompetenceService(ICompetenceRepository repository) : ICompetenceSe
         {
             Id = competence.Id,
             CompetenceName = competence.CompetenceName,
+            RowVersion = competence.RowVersion,
         };
     }
 }
