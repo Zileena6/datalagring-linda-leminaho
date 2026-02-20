@@ -10,7 +10,7 @@ public record UpdateCourseInstanceDTO
 
     public int Capacity { get; init; }
 
-    public LocationId LocationId { get; init; }
+    public Guid LocationId { get; init; }
 
     public byte[] RowVersion { get; init; } = default!;
 }
