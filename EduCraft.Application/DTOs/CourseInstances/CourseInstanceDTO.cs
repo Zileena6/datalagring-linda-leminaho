@@ -9,5 +9,5 @@ public class CourseInstanceDTO
     public DateTime? EndDate { get; init; }
     public int? Capacity { get; init; }
     public string? CourseCode { get; init; }
-    public LocationId LocationId { get; init; }
+    public Guid LocationId { get; init; }
 }
