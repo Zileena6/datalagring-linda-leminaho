@@ -4,15 +4,17 @@ namespace EduCraft.Domain.Interfaces;
 
 public interface IParticipantRepository
 {
-    Task AddAsync(Participant participant, CancellationToken cancellationToken);
+    Task AddAsync(Participant participant, CancellationToken ct);
 
-    Task<Participant?> GetByIdAsync(ParticipantId id, CancellationToken cancellationToken);
+    Task<Participant?> GetByIdAsync(ParticipantId id, CancellationToken ct);
 
-    Task<Participant?> GetByEmailAsync(string email, CancellationToken cancellationToken);
+    Task<Participant?> GetByEmailAsync(string email, CancellationToken ct);
 
-    Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken);
+    Task<bool> ExistsByEmailAsync(string email, CancellationToken ct);
 
-    Task UpdateAsync(Participant participant, byte[] rowVersion, CancellationToken cancellationToken);
+    Task UpdateAsync(Participant participant, byte[] rowVersion, CancellationToken ct);
 
-    Task<bool> DeleteAsync(ParticipantId id, CancellationToken cancellationToken);
+    Task<Instructor?> GetInstructorWithCompetenceAsync(ParticipantId id, CancellationToken ct);
+
+    Task<bool> DeleteAsync(ParticipantId id, CancellationToken ct);
 }

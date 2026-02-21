@@ -7,44 +7,44 @@ namespace EduCraft.Application.Services;
 
 public class LocationService(ILocationRepository repository) : ILocationService
 {
-    public async Task<LocationDTO> CreateLocationAsync(CreateLocationDTO dto, CancellationToken cancellationToken)
+    public async Task<LocationDTO> CreateLocationAsync(CreateLocationDTO dto, CancellationToken ct)
     {
         var location = Location.Create(
             dto.LocationName
             );
 
-        await repository.AddAsync(location, cancellationToken);
+        await repository.AddAsync(location, ct);
 
         return MapToDTO(location);
     }
 
-    public async Task<IEnumerable<LocationDTO>> GetAllLocationsAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<LocationDTO>> GetAllLocationsAsync(CancellationToken ct)
     {
-        var locations = await repository.GetAllAsync(cancellationToken);
+        var locations = await repository.GetAllAsync(ct);
 
         return [.. locations.Select(MapToDTO)];
     }
 
-    public async Task<LocationDTO> UpdateLocationAsync(Guid id, UpdateLocationDTO dto, CancellationToken cancellationToken)
+    public async Task<LocationDTO> UpdateLocationAsync(Guid id, UpdateLocationDTO dto, CancellationToken ct)
     {
         var locationId = new LocationId(id);
 
-        var location = await repository.GetByIdAsync(locationId, cancellationToken) ??
+        var location = await repository.GetByIdAsync(locationId, ct) ??
             throw new ArgumentException($"Location with id {id} was not found.");
 
         location.Update(
             dto.LocationName);
 
-        await repository.UpdateAsync(location, dto.RowVersion, cancellationToken);
+        await repository.UpdateAsync(location, dto.RowVersion, ct);
 
         return MapToDTO(location);
     }
 
-    public async Task DeleteLocationAsync(Guid id, CancellationToken cancellationToken)
+    public async Task DeleteLocationAsync(Guid id, CancellationToken ct)
     {
         var locationId = new LocationId(id);
 
-        var deleted = await repository.DeleteAsync(locationId, cancellationToken);
+        var deleted = await repository.DeleteAsync(locationId, ct);
 
         if (!deleted)
             throw new ArgumentException($"Location with id {id} was not found.");

@@ -75,13 +75,22 @@ participants.MapPost("/", async(
     );
 });
 
+participants.MapPost("/competences", async (
+    AddCompetenceDTO dto,
+    IParticipantService service,
+    CancellationToken ct
+) =>
+{
+    await service.AddCompetenceToInstructorAsync(dto, ct);
+    return Results.Ok();
+});
+
 participants.MapGet("/", async (
-    IParticipantService service, CancellationToken ct)
-    => Results.Ok(await service.GetAllParticipantsAsync(ct)));
+    IParticipantService service, 
+    CancellationToken ct)=> Results.Ok(await service.GetAllParticipantsAsync(ct)));
 
 participants.MapGet("/students", async (
-    IParticipantService service, CancellationToken ct) =>
-Results.Ok(await service.GetAllStudentsAsync(ct)));
+    IParticipantService service, CancellationToken ct) => Results.Ok(await service.GetAllStudentsAsync(ct)));
 
 participants.MapPatch("/{id:guid}", async (
     Guid id,
@@ -107,7 +116,9 @@ participants.MapDelete("/{id:guid}", async (
 
 #region courses
 
-app.MapPost("/api/courses", async (
+var courses = app.MapGroup("/api/courses");
+
+courses.MapPost("/", async (
     CreateCourseDTO dto,
     ICourseService service,
     CancellationToken ct
@@ -121,11 +132,11 @@ app.MapPost("/api/courses", async (
     );
 });
 
-app.MapGet("/api/courses", async (
+courses.MapGet("/", async (
     ICourseService service, CancellationToken ct)
     => Results.Ok(await service.GetAllCoursesAsync(ct)));
 
-app.MapPatch("/api/courses/{id:guid}", async (
+courses.MapPatch("/{id:guid}", async (
     Guid id,
     UpdateCourseDTO dto,
     ICourseService service,
@@ -136,7 +147,7 @@ app.MapPatch("/api/courses/{id:guid}", async (
     return Results.Ok(updated);
 });
 
-app.MapDelete("/api/courses/{id:guid}", async (
+courses.MapDelete("/{id:guid}", async (
     Guid id,
     ICourseService service,
     CancellationToken ct) =>
@@ -149,7 +160,9 @@ app.MapDelete("/api/courses/{id:guid}", async (
 
 #region competences
 
-app.MapPost("/api/competences", async (
+var competences = app.MapGroup("/api/competences");
+
+competences.MapPost("/", async (
     CreateCompetenceDTO dto,
     ICompetenceService service,
     CancellationToken ct
@@ -163,11 +176,11 @@ app.MapPost("/api/competences", async (
     );
 });
 
-app.MapGet("/api/competences", async (
+competences.MapGet("/", async (
     ICompetenceService service, CancellationToken ct)
     => Results.Ok(await service.GetAllCompetencesAsync(ct)));
 
-app.MapPatch("/api/competences/{id:guid}", async (
+competences.MapPatch("/{id:guid}", async (
     Guid id,
     UpdateCompetenceDTO dto,
     ICompetenceService service,
@@ -178,7 +191,7 @@ app.MapPatch("/api/competences/{id:guid}", async (
     return Results.Ok();
 });
 
-app.MapDelete("/api/competences/{id:guid}", async (
+competences.MapDelete("/{id:guid}", async (
     Guid id,
     ICompetenceService service,
     CancellationToken ct) =>
@@ -191,7 +204,9 @@ app.MapDelete("/api/competences/{id:guid}", async (
 
 #region locations
 
-app.MapPost("/api/locations", async (
+var locations = app.MapGroup("/api/locations");
+
+locations.MapPost("/", async (
     CreateLocationDTO dto,
     ILocationService service,
     CancellationToken ct
@@ -205,11 +220,11 @@ app.MapPost("/api/locations", async (
     );
 });
 
-app.MapGet("/api/locations", async (
+locations.MapGet("/", async (
     ILocationService service, CancellationToken ct)
     => Results.Ok(await service.GetAllLocationsAsync(ct)));
 
-app.MapPatch("/api/locations/{id:guid}", async (
+locations.MapPatch("/{id:guid}", async (
     Guid id,
     UpdateLocationDTO dto,
     ILocationService service,
@@ -220,7 +235,7 @@ app.MapPatch("/api/locations/{id:guid}", async (
     return Results.Ok(updated);
 });
 
-app.MapDelete("/api/locations/{id:guid}", async (
+locations.MapDelete("/{id:guid}", async (
     Guid id,
     ILocationService service,
     CancellationToken ct) =>
@@ -233,7 +248,9 @@ app.MapDelete("/api/locations/{id:guid}", async (
 
 #region courseInstances
 
-app.MapPost("/api/courseInstances", async (
+var courseInstances = app.MapGroup("/api/courseInstances");
+
+courseInstances.MapPost("/", async (
     CreateCourseInstanceDTO dto,
     ICourseInstanceService service,
     CancellationToken ct
@@ -247,11 +264,21 @@ app.MapPost("/api/courseInstances", async (
     );
 });
 
-app.MapGet("/api/courseInstances", async (
+courseInstances.MapPost("/enroll", async (
+    EnrollStudentDTO dto,
+    ICourseInstanceService service,
+    CancellationToken ct
+) =>
+{
+    await service.EnrollStudentAsync(dto, ct);
+    return Results.Ok();
+});
+
+courseInstances.MapGet("/", async (
     ICourseInstanceService service, CancellationToken ct)
     => Results.Ok(await service.GetAllCourseInstancesAsync(ct)));
 
-app.MapPatch("/api/courseInstances/{id:guid}", async (
+courseInstances.MapPatch("/{id:guid}", async (
     Guid id,
     UpdateCourseInstanceDTO dto,
     ICourseInstanceService service,
@@ -262,7 +289,7 @@ app.MapPatch("/api/courseInstances/{id:guid}", async (
     return Results.Ok(updated);
 });
 
-app.MapDelete("/api/courseInstances/{id:guid}", async (
+courseInstances.MapDelete("/{id:guid}", async (
     Guid id,
     ICourseInstanceService service,
     CancellationToken ct) =>

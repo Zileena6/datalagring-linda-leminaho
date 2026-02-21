@@ -1,6 +1,4 @@
-﻿using EduCraft.Domain.Entities.Locations;
-
-namespace EduCraft.Application.DTOs.CourseInstances;
+﻿namespace EduCraft.Application.DTOs.CourseInstances;
 
 public class CourseInstanceDTO
 {

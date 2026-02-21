@@ -1,6 +1,5 @@
 ﻿namespace EduCraft.Domain.Entities.Courses;
 
-
 public readonly record struct CompetenceId
 {
     public Guid Value { get; }

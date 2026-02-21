@@ -4,14 +4,14 @@ namespace EduCraft.Application.Interfaces;
 
 public interface ILocationService
 {
-    Task<LocationDTO> CreateLocationAsync(CreateLocationDTO dto, CancellationToken cancellationToken);
+    Task<LocationDTO> CreateLocationAsync(CreateLocationDTO dto, CancellationToken ct);
 
-    Task<IEnumerable<LocationDTO>> GetAllLocationsAsync(CancellationToken cancellationToken);
+    Task<IEnumerable<LocationDTO>> GetAllLocationsAsync(CancellationToken ct);
 
     Task<LocationDTO> UpdateLocationAsync(
         Guid id, 
         UpdateLocationDTO dto, 
-        CancellationToken cancellationToken);
+        CancellationToken ct);
 
-    Task DeleteLocationAsync(Guid id, CancellationToken cancellationToken);
+    Task DeleteLocationAsync(Guid id, CancellationToken ct);
 }
