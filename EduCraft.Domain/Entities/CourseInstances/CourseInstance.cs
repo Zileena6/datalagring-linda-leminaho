@@ -1,6 +1,7 @@
 ﻿using EduCraft.Domain.Entities.Courses;
 using EduCraft.Domain.Entities.Locations;
 using EduCraft.Domain.Entities.Participants;
+using EduCraft.Domain.Enums;
 using EduCraft.Domain.Interfaces;
 using EduCraft.Domain.Primitives;
 
@@ -54,6 +55,29 @@ public class CourseInstance : BaseEntity<CourseInstanceId>, IAggregateRoot
         LocationId = locationId;
 
         UpdateTimeStamp();
+    }
+
+    public void EnrollStudent(Student student)
+    {
+        if (student == null) 
+            throw new ArgumentNullException(nameof(student));
+
+        if (_enrollments.Count >= Capacity)
+            throw new InvalidOperationException("Course instance is at full capacity.");
+
+        if (_enrollments.Any(e => e.StudentId == student.Id))
+            throw new InvalidOperationException("Student is already enrolled in this course instance.");
+
+        var enrollment = new Enrollment(
+            EnrollmentId.New(),
+            DateTime.UtcNow,
+            DateTime.UtcNow,
+            EnrollmentStatus.Pending,
+            student.Id,
+            this.Id
+        );
+
+        _enrollments.Add(enrollment);
     }
 
     protected CourseInstance(

@@ -7,7 +7,7 @@ namespace EduCraft.Application.Services;
 
 public class CourseService(ICourseRepository repository) : ICourseService
 {   
-    public async Task<CourseDTO> CreateCourseAsync(CreateCourseDTO dto, CancellationToken cancellationToken)
+    public async Task<CourseDTO> CreateCourseAsync(CreateCourseDTO dto, CancellationToken ct)
     {
         var course = Course.Create(
             dto.CourseCode,
@@ -15,23 +15,23 @@ public class CourseService(ICourseRepository repository) : ICourseService
             dto.Description
         );
 
-        await repository.AddAsync(course, cancellationToken);
+        await repository.AddAsync(course, ct);
 
         return MapToDTO(course);
     }
 
-    public async Task<IEnumerable<CourseDTO>> GetAllCoursesAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<CourseDTO>> GetAllCoursesAsync(CancellationToken ct)
     {
-        var courses = await repository.GetAllAsync(cancellationToken);
+        var courses = await repository.GetAllAsync(ct);
 
         return [.. courses.Select(MapToDTO)];
     }
 
-    public async Task<CourseDTO> UpdateCourseAsync(Guid id, UpdateCourseDTO dto, CancellationToken cancellationToken)
+    public async Task<CourseDTO> UpdateCourseAsync(Guid id, UpdateCourseDTO dto, CancellationToken ct)
     {
         var courseId = new CourseId(id);
 
-        var course = await repository.GetByIdAsync(courseId, cancellationToken) ?? 
+        var course = await repository.GetByIdAsync(courseId, ct) ?? 
             throw new ArgumentException($"Course with id {id} was not found.");
 
         course.Update(
@@ -39,16 +39,16 @@ public class CourseService(ICourseRepository repository) : ICourseService
             dto.Description
         );
 
-        await repository.UpdateAsync(course, dto.RowVersion, cancellationToken);
+        await repository.UpdateAsync(course, dto.RowVersion, ct);
 
         return MapToDTO(course);
     }
 
-    public async Task DeleteCourseAsync(Guid id, CancellationToken cancellationToken)
+    public async Task DeleteCourseAsync(Guid id, CancellationToken ct)
     {
         var courseId = new CourseId(id);
 
-        var deleted = await repository.DeleteAsync(courseId, cancellationToken);
+        var deleted = await repository.DeleteAsync(courseId, ct);
 
         if (!deleted)
             throw new ArgumentException($"Course with id {id} was not found.");

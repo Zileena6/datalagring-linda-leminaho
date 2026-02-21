@@ -4,14 +4,14 @@ namespace EduCraft.Application.Interfaces;
 
 public interface ICourseService
 {
-    Task<CourseDTO> CreateCourseAsync(CreateCourseDTO dto, CancellationToken cancellationToken);
+    Task<CourseDTO> CreateCourseAsync(CreateCourseDTO dto, CancellationToken ct);
 
-    Task<IEnumerable<CourseDTO>> GetAllCoursesAsync(CancellationToken cancellationToken);
+    Task<IEnumerable<CourseDTO>> GetAllCoursesAsync(CancellationToken ct);
 
     Task<CourseDTO> UpdateCourseAsync(
         Guid id, 
         UpdateCourseDTO dto, 
-        CancellationToken cancellationToken);
+        CancellationToken ct);
 
-    Task DeleteCourseAsync(Guid id, CancellationToken cancellationToken);
+    Task DeleteCourseAsync(Guid id, CancellationToken ct);
 }

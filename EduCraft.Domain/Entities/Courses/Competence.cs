@@ -42,13 +42,13 @@ public class Competence : BaseEntity<CompetenceId>, IAggregateRoot
 
     public virtual IReadOnlyCollection<Instructor> Instructors => _instructors.AsReadOnly();
 
-    public void AddInstructor(Instructor instructor)
-    {
-        ArgumentNullException.ThrowIfNull(instructor);
+    //public void AddInstructor(Instructor instructor)
+    //{
+    //    ArgumentNullException.ThrowIfNull(instructor);
 
-        if (!_instructors.Any(i => i.Id == instructor.Id))
-        {
-            _instructors.Add(instructor);
-        }
-    }
+    //    if (!_instructors.Any(i => i.Id == instructor.Id))
+    //    {
+    //        _instructors.Add(instructor);
+    //    }
+    //}
 }

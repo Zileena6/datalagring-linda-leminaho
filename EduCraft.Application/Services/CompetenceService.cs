@@ -7,45 +7,49 @@ namespace EduCraft.Application.Services;
 
 public class CompetenceService(ICompetenceRepository repository) : ICompetenceService
 {
-    public async Task<CompetenceDTO> CreateCompetenceAsync(CreateCompetenceDTO dto, CancellationToken cancellationToken)
+    public async Task<CompetenceDTO> CreateCompetenceAsync(CreateCompetenceDTO dto, CancellationToken ct)
     {
         var competence = Competence.Create(
             dto.CompetenceName
             );
 
-        await repository.AddAsync(competence, cancellationToken);
+        await repository.AddAsync(competence, ct);
 
         return MapToDTO(competence);
     }
 
-    public async Task<IEnumerable<CompetenceDTO>> GetAllCompetencesAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<CompetenceDTO>> GetAllCompetencesAsync(CancellationToken ct)
     {
-        var competences = await repository.GetAllAsync(cancellationToken);
+        var competences = await repository.GetAllAsync(ct);
 
         return [.. competences.Select(MapToDTO)];
     }
 
-    public async Task<CompetenceDTO> UpdateCompetenceAsync(Guid id, UpdateCompetenceDTO dto, CancellationToken cancellationToken)
+    public async Task<CompetenceDTO> UpdateCompetenceAsync(
+        Guid id, 
+        UpdateCompetenceDTO dto, 
+        CancellationToken ct
+    )
     {
         var competenceId = new CompetenceId(id);
 
-        var competence = await repository.GetByIdAsync(competenceId, cancellationToken) ??
+        var competence = await repository.GetByIdAsync(competenceId, ct) ??
             throw new ArgumentException($"Competence with id {id} was not found.");
 
         competence.Update(
             dto.CompetenceName    
         );
 
-        await repository.UpdateAsync(competence, dto.RowVersion, cancellationToken);
+        await repository.UpdateAsync(competence, dto.RowVersion, ct);
 
         return MapToDTO(competence);
     }
 
-    public async Task DeleteCompetenceAsync(Guid id, CancellationToken cancellationToken)
+    public async Task DeleteCompetenceAsync(Guid id, CancellationToken ct)
     {
         var competenceId = new CompetenceId(id);
 
-        var deleted = await repository.DeleteAsync(competenceId, cancellationToken);
+        var deleted = await repository.DeleteAsync(competenceId, ct);
 
         if (!deleted)
             throw new ArgumentException($"Competence with id {id} was not found.");

@@ -2,13 +2,17 @@
 using EduCraft.Application.Interfaces;
 using EduCraft.Domain.Entities.CourseInstances;
 using EduCraft.Domain.Entities.Locations;
+using EduCraft.Domain.Entities.Participants;
 using EduCraft.Domain.Interfaces;
 
 namespace EduCraft.Application.Services;
 
-public class CourseInstanceService(ICourseInstanceRepository repository) : ICourseInstanceService
+public class CourseInstanceService(
+    ICourseInstanceRepository courseInstanceRepository,
+    IParticipantRepository participantRepository
+) : ICourseInstanceService
 {
-    public async Task<CourseInstanceDTO> CreateCourseInstanceAsync(CreateCourseInstanceDTO dto, CancellationToken cancellationToken)
+    public async Task<CourseInstanceDTO> CreateCourseInstanceAsync(CreateCourseInstanceDTO dto, CancellationToken ct)
     {
         var locationId = new LocationId(dto.LocationId);
 
@@ -22,23 +26,27 @@ public class CourseInstanceService(ICourseInstanceRepository repository) : ICour
 
         Console.WriteLine("LocationId being saved: " + courseInstance.LocationId.Value);
 
-        await repository.AddAsync( courseInstance, cancellationToken );
+        await courseInstanceRepository.AddAsync( courseInstance, ct );
 
         return MapToDTO(courseInstance);
     }
 
-    public async Task<IEnumerable<CourseInstanceDTO>> GetAllCourseInstancesAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<CourseInstanceDTO>> GetAllCourseInstancesAsync(CancellationToken ct)
     {
-        var courseInstances = await repository.GetAllAsync(cancellationToken);
+        var courseInstances = await courseInstanceRepository.GetAllAsync(ct);
 
         return [.. courseInstances.Select(MapToDTO)];
     }
 
-    public async Task<CourseInstanceDTO> UpdateCourseInstanceAsync(Guid id, UpdateCourseInstanceDTO dto, CancellationToken cancellationToken)
+    public async Task<CourseInstanceDTO> UpdateCourseInstanceAsync(
+        Guid id, 
+        UpdateCourseInstanceDTO dto, 
+        CancellationToken ct
+    )
     {
         var courseInstanceId = new CourseInstanceId(id);
 
-        var courseInstance = await repository.GetByIdAsync(courseInstanceId, cancellationToken) ??
+        var courseInstance = await courseInstanceRepository.GetByIdAsync(courseInstanceId, ct) ??
             throw new ArgumentException($"CourseInstance with id {id} was not found.");
 
         var locationId = new LocationId(dto.LocationId);
@@ -50,16 +58,31 @@ public class CourseInstanceService(ICourseInstanceRepository repository) : ICour
             locationId
         );
 
-        await repository.UpdateAsync(courseInstance, dto.RowVersion, cancellationToken);
+        await courseInstanceRepository.UpdateAsync(courseInstance, dto.RowVersion, ct);
 
         return MapToDTO(courseInstance);
     }
 
-    public async Task DeleteCourseInstanceAsync(Guid id, CancellationToken cancellationToken)
+    public async Task EnrollStudentAsync(EnrollStudentDTO dto, CancellationToken ct)
+    {
+        var courseInstance = await courseInstanceRepository.GetByIdAsync(
+            new CourseInstanceId(dto.CourseInstanceId), ct) ??
+            throw new ArgumentException($"CourseInstance with id {dto.CourseInstanceId} was not found.");
+
+        var student = await participantRepository.GetByIdAsync(
+            new ParticipantId(dto.StudentId), ct) as Student ??
+            throw new InvalidOperationException($"Participant is not a student.");
+
+        courseInstance.EnrollStudent(student);
+
+        await courseInstanceRepository.UpdateAsync(courseInstance, courseInstance.RowVersion, ct);
+    }
+
+    public async Task DeleteCourseInstanceAsync(Guid id, CancellationToken ct)
     {
         var courseInstanceId = new CourseInstanceId(id);
 
-        var deleted = await repository.DeleteAsync(courseInstanceId, cancellationToken);
+        var deleted = await courseInstanceRepository.DeleteAsync(courseInstanceId, ct);
 
         if (!deleted)
             throw new ArgumentException($"CourseInstance with id {id} was not found.");

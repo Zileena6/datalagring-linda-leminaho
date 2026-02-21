@@ -1,13 +1,19 @@
-﻿using EduCraft.Application.DTOs.Participants;
+﻿using EduCraft.Application.DTOs.Competences;
+using EduCraft.Application.DTOs.Participants;
 using EduCraft.Application.Interfaces;
+using EduCraft.Domain.Entities.Courses;
 using EduCraft.Domain.Entities.Participants;
 using EduCraft.Domain.Interfaces;
 
 namespace EduCraft.Application.Services.Participants;
 
-public class ParticipantService(IParticipantRepository repository, IParticipantQueries queries) : IParticipantService
+public class ParticipantService(
+    IParticipantRepository repository, 
+    IParticipantQueries queries,
+    ICompetenceRepository competenceRepository 
+    ): IParticipantService
 {
-    public async Task<ParticipantDTO> CreateParticipantAsync(CreateParticipantDTO dto, CancellationToken cancellationToken)
+    public async Task<ParticipantDTO> CreateParticipantAsync(CreateParticipantDTO dto, CancellationToken ct)
     {
         var participant = Participant.Create(
             dto.FirstName,
@@ -17,27 +23,27 @@ public class ParticipantService(IParticipantRepository repository, IParticipantQ
             dto.Role
             );
 
-        await repository.AddAsync(participant, cancellationToken);
+        await repository.AddAsync(participant, ct);
 
         return MapToDTO([participant]).First();
     }
-    public async Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken)
+    public async Task<bool> ExistsByEmailAsync(string email, CancellationToken ct)
     {
-        return await repository.ExistsByEmailAsync(email, cancellationToken);
+        return await repository.ExistsByEmailAsync(email, ct);
     }
 
-    public async Task<IEnumerable<ParticipantDTO>> GetAllParticipantsAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<ParticipantDTO>> GetAllParticipantsAsync(CancellationToken ct)
     {
-        var participants = await queries.GetAllAsync(cancellationToken);
+        var participants = await queries.GetAllAsync(ct);
 
         return MapToDTO(participants);
     }
 
-    public async Task<ParticipantDTO> GetParticipantByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<ParticipantDTO> GetParticipantByIdAsync(Guid id, CancellationToken ct)
     {
         var participantId = new ParticipantId(id);
 
-        var participant = await repository.GetByIdAsync(participantId, cancellationToken) ?? 
+        var participant = await repository.GetByIdAsync(participantId, ct) ?? 
             throw new ArgumentException($"Participant with id {id} was not found.");
 
         return MapToDTO([participant]).First();
@@ -46,14 +52,14 @@ public class ParticipantService(IParticipantRepository repository, IParticipantQ
     public async Task<ParticipantDTO> UpdateParticipantAsync(
         Guid id,
         UpdateParticipantDTO dto,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var participantId = new ParticipantId(id);
 
-        var participant = await repository.GetByIdAsync(participantId, cancellationToken) ?? 
+        var participant = await repository.GetByIdAsync(participantId, ct) ?? 
             throw new ArgumentException($"Participant with id {id} was not found.");
 
-        var exists = await repository.ExistsByEmailAsync(dto.Email, cancellationToken);
+        var exists = await repository.ExistsByEmailAsync(dto.Email, ct);
 
         if (exists && participant.Email != dto.Email)
             throw new InvalidOperationException("Email already exists");
@@ -65,16 +71,44 @@ public class ParticipantService(IParticipantRepository repository, IParticipantQ
             dto.PhoneNumber
         );
 
-        await repository.UpdateAsync(participant, dto.RowVersion, cancellationToken);
+        await repository.UpdateAsync(participant, dto.RowVersion, ct);
 
         return MapToDTO([participant]).First();
     }
 
-    public async Task DeleteParticipantAsync(Guid id, CancellationToken cancellationToken)
+    public async Task AddCompetenceToInstructorAsync(
+        Guid instructorId, 
+        Guid competenceId, 
+        CancellationToken ct)
+    {
+        var participant = await repository.GetByIdAsync(new ParticipantId(instructorId), ct);
+
+        if (participant is null)
+            throw new ArgumentException("Instructor not found.");
+
+        if (participant is not Instructor instructor)
+            throw new InvalidOperationException("Participant is not an instructor.");
+
+        var competence = await competenceRepository.GetByIdAsync(new CompetenceId(competenceId), ct);
+
+        if (competence is null)
+            throw new ArgumentException("Competence not found");
+
+        instructor.AddCompetence(competence);
+
+        await repository.UpdateAsync(instructor, instructor.RowVersion, ct);
+    }
+
+    public async Task AddCompetenceToInstructorAsync(AddCompetenceDTO dto, CancellationToken ct)
+    {
+        await AddCompetenceToInstructorAsync(dto.InstructorId, dto.CompetenceId, ct);
+    }
+
+    public async Task DeleteParticipantAsync(Guid id, CancellationToken ct)
     {
         var participantId = new ParticipantId(id);
 
-        var deleted = await repository.DeleteAsync(participantId, cancellationToken);
+        var deleted = await repository.DeleteAsync(participantId, ct);
 
         if (!deleted)
             throw new ArgumentException($"Participant with id {id} was not found.");
@@ -107,9 +141,9 @@ public class ParticipantService(IParticipantRepository repository, IParticipantQ
         });
     }
 
-    public async Task<IEnumerable<ParticipantDTO>> GetAllStudentsAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<ParticipantDTO>> GetAllStudentsAsync(CancellationToken ct)
     {
-        var students = await queries.GetAllStudentsAsync(cancellationToken);
+        var students = await queries.GetAllStudentsAsync(ct);
 
         return MapToDTO(students);
     }

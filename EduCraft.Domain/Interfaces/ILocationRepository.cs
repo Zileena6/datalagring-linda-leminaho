@@ -4,5 +4,5 @@ namespace EduCraft.Domain.Interfaces;
 
 public interface ILocationRepository : IBaseRepository<Location, LocationId>
 {
-    Task<bool> ExistsByLocationName(string LocationName, CancellationToken cancellationToken);
+    Task<bool> ExistsByLocationName(string LocationName, CancellationToken ct);
 }
