@@ -36,4 +36,10 @@ public class Enrollment
     public CourseInstance CourseInstance { get; private set; } = null!;
 
     public byte[] RowVersion { get; private set; } = default!;
+
+    public void SetStatus(EnrollmentStatus status)
+    {
+        Status = status;
+        UpdatedAt = DateTime.UtcNow;
+    }
 }

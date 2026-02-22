@@ -24,8 +24,11 @@ public class EnrollmentConfiguration : IEntityTypeConfiguration<Enrollment>
             value => new ParticipantId(value));
 
         builder.HasOne(e => e.Student)
-            .WithMany()
+            .WithMany(s => s.Enrollments)
             .HasForeignKey(e => e.StudentId);
+
+        builder.Metadata.FindNavigation(nameof(Student.Enrollments))
+            ?.SetPropertyAccessMode(PropertyAccessMode.Field);
 
         builder.Property(e => e.CourseInstanceId).HasConversion(
             courseInstanceId => courseInstanceId.Value,

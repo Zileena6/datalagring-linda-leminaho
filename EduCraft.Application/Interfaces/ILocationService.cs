@@ -8,6 +8,8 @@ public interface ILocationService
 
     Task<IEnumerable<LocationDTO>> GetAllLocationsAsync(CancellationToken ct);
 
+    Task<LocationDTO> GetLocationByIdAsync(Guid id, CancellationToken ct);
+
     Task<LocationDTO> UpdateLocationAsync(
         Guid id, 
         UpdateLocationDTO dto, 

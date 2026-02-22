@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 namespace EduCraft.Application.DTOs.Participants;
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "$type")]
-[JsonDerivedType(typeof(ParticipantDTO), "student")]
+[JsonDerivedType(typeof(StudentDTO), "student")]
 [JsonDerivedType(typeof(InstructorDTO), "instructor")]
 public record ParticipantDTO
 {

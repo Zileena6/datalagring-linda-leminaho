@@ -37,10 +37,24 @@ public class ParticipantRepository(ApplicationDbContext context)
 
     public async Task<IEnumerable<Student>> GetAllStudentsAsync(CancellationToken ct)
     {
-        return await _context.Students.AsNoTracking().ToListAsync(ct);
+        return await _context.Students
+            .Include(s => s.Enrollments)
+                .ThenInclude(e => e.CourseInstance)
+            .AsNoTracking()
+            .ToListAsync(ct);
     }
 
-    public async Task<Instructor?> GetInstructorWithCompetenceAsync(ParticipantId id, CancellationToken ct)
+    public async Task<IEnumerable<Instructor>> GetAllInstructorsAsync(CancellationToken ct)
+    {
+        return await _context.Instructors
+            .Include(i => i.Competences)
+            .AsNoTracking()
+            .ToListAsync(ct);
+    }
+
+    public async Task<Instructor?> GetInstructorWithCompetenceAsync(
+        ParticipantId id, 
+        CancellationToken ct)
     {
         return await _context.Participants
             .OfType<Instructor>()

@@ -41,14 +41,4 @@ public class Competence : BaseEntity<CompetenceId>, IAggregateRoot
     public string CompetenceName { get; private set; } = string.Empty;
 
     public virtual IReadOnlyCollection<Instructor> Instructors => _instructors.AsReadOnly();
-
-    //public void AddInstructor(Instructor instructor)
-    //{
-    //    ArgumentNullException.ThrowIfNull(instructor);
-
-    //    if (!_instructors.Any(i => i.Id == instructor.Id))
-    //    {
-    //        _instructors.Add(instructor);
-    //    }
-    //}
 }

@@ -57,6 +57,26 @@ public class CourseInstance : BaseEntity<CourseInstanceId>, IAggregateRoot
         UpdateTimeStamp();
     }
 
+    public void ConfirmEnrollment(Enrollment enrollment)
+    {
+        if (!_enrollments.Contains(enrollment))
+            throw new InvalidOperationException("Enrollment not found in this course instance");
+
+        if (enrollment.Status != EnrollmentStatus.Pending)
+            throw new InvalidOperationException("Only pending enrollments can be confirmed.");
+
+        enrollment.SetStatus(EnrollmentStatus.Confirmed);
+    }
+
+    public void CancelEnrollment(Enrollment enrollment)
+    {
+        if (!_enrollments.Contains(enrollment))
+            throw new InvalidOperationException("Enrollment not found in this course instance");
+        if (enrollment.Status != EnrollmentStatus.Pending)
+            throw new InvalidOperationException("Only pending enrollments can be cancelled.");
+        enrollment.SetStatus(EnrollmentStatus.Cancelled);
+    }
+
     public void EnrollStudent(Student student)
     {
         if (student == null) 

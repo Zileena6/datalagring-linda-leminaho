@@ -90,7 +90,18 @@ participants.MapGet("/", async (
     CancellationToken ct)=> Results.Ok(await service.GetAllParticipantsAsync(ct)));
 
 participants.MapGet("/students", async (
-    IParticipantService service, CancellationToken ct) => Results.Ok(await service.GetAllStudentsAsync(ct)));
+    IParticipantService service, 
+    CancellationToken ct) => Results.Ok(await service.GetAllStudentsAsync(ct)));
+
+participants.MapGet("/instructors", async (
+    IParticipantService service, 
+    CancellationToken ct) => Results.Ok(await service.GetAllInstructorsAsync(ct)));
+
+participants.MapGet("/{id:guid}", async (
+    Guid id,
+    IParticipantService service, 
+    CancellationToken ct
+) => Results.Ok(await service.GetParticipantByIdAsync(id, ct)));
 
 participants.MapPatch("/{id:guid}", async (
     Guid id,
@@ -136,6 +147,11 @@ courses.MapGet("/", async (
     ICourseService service, CancellationToken ct)
     => Results.Ok(await service.GetAllCoursesAsync(ct)));
 
+courses.MapGet("/{id:guid}", async (
+    Guid id,
+    ICourseService service,
+    CancellationToken ct) => Results.Ok(await service.GetCourseByIdAsync(id, ct)));
+
 courses.MapPatch("/{id:guid}", async (
     Guid id,
     UpdateCourseDTO dto,
@@ -180,6 +196,11 @@ competences.MapGet("/", async (
     ICompetenceService service, CancellationToken ct)
     => Results.Ok(await service.GetAllCompetencesAsync(ct)));
 
+competences.MapGet("/{id:guid}", async (
+    Guid id,
+    ICompetenceService service,
+    CancellationToken ct) => Results.Ok(await service.GetCompetenceByIdAsync(id, ct)));
+
 competences.MapPatch("/{id:guid}", async (
     Guid id,
     UpdateCompetenceDTO dto,
@@ -221,8 +242,12 @@ locations.MapPost("/", async (
 });
 
 locations.MapGet("/", async (
-    ILocationService service, CancellationToken ct)
-    => Results.Ok(await service.GetAllLocationsAsync(ct)));
+    ILocationService service, CancellationToken ct) => Results.Ok(await service.GetAllLocationsAsync(ct)));
+
+locations.MapGet("/{id:guid}", async(
+    Guid id,
+    ILocationService service,
+    CancellationToken ct) => Results.Ok(await service.GetLocationByIdAsync(id, ct)));
 
 locations.MapPatch("/{id:guid}", async (
     Guid id,
@@ -264,6 +289,16 @@ courseInstances.MapPost("/", async (
     );
 });
 
+courseInstances.MapPost("/request-enrollment", async (
+    RequestEnrollmentDTO dto,
+    ICourseInstanceService service,
+    CancellationToken ct
+) =>
+{
+    await service.RequestEnrollmentAsync(dto, ct);
+    return Results.Ok();
+});
+
 courseInstances.MapPost("/enroll", async (
     EnrollStudentDTO dto,
     ICourseInstanceService service,
@@ -277,6 +312,12 @@ courseInstances.MapPost("/enroll", async (
 courseInstances.MapGet("/", async (
     ICourseInstanceService service, CancellationToken ct)
     => Results.Ok(await service.GetAllCourseInstancesAsync(ct)));
+
+courseInstances.MapGet("/{id:guid}", async (
+    Guid id,
+    ICourseInstanceService service,
+    CancellationToken ct
+) => Results.Ok(await service.GetByIdAsync(id, ct)));
 
 courseInstances.MapPatch("/{id:guid}", async (
     Guid id,
