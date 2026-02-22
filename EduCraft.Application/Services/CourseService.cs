@@ -27,6 +27,16 @@ public class CourseService(ICourseRepository repository) : ICourseService
         return [.. courses.Select(MapToDTO)];
     }
 
+    public async Task<CourseDTO> GetCourseByIdAsync(Guid id, CancellationToken ct)
+    {
+        var courseId = new CourseId(id);
+
+        var course = await repository.GetByIdAsync(courseId, ct) ??
+            throw new ArgumentException($"Course with id {id} was not found.");
+
+        return MapToDTO(course);
+    }
+
     public async Task<CourseDTO> UpdateCourseAsync(Guid id, UpdateCourseDTO dto, CancellationToken ct)
     {
         var courseId = new CourseId(id);
@@ -54,7 +64,7 @@ public class CourseService(ICourseRepository repository) : ICourseService
             throw new ArgumentException($"Course with id {id} was not found.");
     }
 
-    private static CourseDTO MapToDTO(Course course)
+    public static CourseDTO MapToDTO(Course course)
     {
         return new CourseDTO
         {

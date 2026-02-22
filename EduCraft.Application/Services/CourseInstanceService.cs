@@ -1,8 +1,10 @@
 ﻿using EduCraft.Application.DTOs.CourseInstances;
 using EduCraft.Application.Interfaces;
+using EduCraft.Application.Services.Participants;
 using EduCraft.Domain.Entities.CourseInstances;
 using EduCraft.Domain.Entities.Locations;
 using EduCraft.Domain.Entities.Participants;
+using EduCraft.Domain.Enums;
 using EduCraft.Domain.Interfaces;
 
 namespace EduCraft.Application.Services;
@@ -28,14 +30,24 @@ public class CourseInstanceService(
 
         await courseInstanceRepository.AddAsync( courseInstance, ct );
 
-        return MapToDTO(courseInstance);
+        return await GetByIdAsync(courseInstance.Id.Value, ct);
     }
 
     public async Task<IEnumerable<CourseInstanceDTO>> GetAllCourseInstancesAsync(CancellationToken ct)
     {
-        var courseInstances = await courseInstanceRepository.GetAllAsync(ct);
+        var courseInstances = await courseInstanceRepository.GetAllWithCourseAsync(ct);
 
         return [.. courseInstances.Select(MapToDTO)];
+    }
+
+    public async Task<CourseInstanceDTO> GetByIdAsync(Guid id, CancellationToken ct)
+    {
+        var instanceId = new CourseInstanceId(id);
+
+        var instance = await courseInstanceRepository.GetByIdAsync(instanceId, ct) ??
+            throw new ArgumentException($"Course instance with id {id} was not found.");
+
+        return MapToDTO(instance);
     }
 
     public async Task<CourseInstanceDTO> UpdateCourseInstanceAsync(
@@ -47,7 +59,10 @@ public class CourseInstanceService(
         var courseInstanceId = new CourseInstanceId(id);
 
         var courseInstance = await courseInstanceRepository.GetByIdAsync(courseInstanceId, ct) ??
-            throw new ArgumentException($"CourseInstance with id {id} was not found.");
+            throw new ArgumentException($"Course instance with id {id} was not found.");
+
+        if (dto.LocationId == Guid.Empty)
+            throw new ArgumentException("A valid LocationId must be provided.");
 
         var locationId = new LocationId(dto.LocationId);
 
@@ -61,6 +76,31 @@ public class CourseInstanceService(
         await courseInstanceRepository.UpdateAsync(courseInstance, dto.RowVersion, ct);
 
         return MapToDTO(courseInstance);
+    }
+
+    public async Task DeleteCourseInstanceAsync(Guid id, CancellationToken ct)
+    {
+        var courseInstanceId = new CourseInstanceId(id);
+
+        var deleted = await courseInstanceRepository.DeleteAsync(courseInstanceId, ct);
+
+        if (!deleted)
+            throw new ArgumentException($"CourseInstance with id {id} was not found.");
+    }
+
+    public async Task RequestEnrollmentAsync(RequestEnrollmentDTO dto, CancellationToken ct)
+    {
+        var courseInstance = await courseInstanceRepository.GetByIdAsync(
+            new CourseInstanceId(dto.CourseInstanceId), ct) ??
+            throw new ArgumentException($"CourseInstance with id {dto.CourseInstanceId} was not found.");
+
+        var student = await participantRepository.GetByIdAsync(
+            new ParticipantId(dto.StudentId), ct) as Student ??
+            throw new InvalidOperationException($"Only students can request enrollment.");
+
+        courseInstance.EnrollStudent(student);
+
+        await courseInstanceRepository.UpdateAsync(courseInstance, courseInstance.RowVersion, ct);
     }
 
     public async Task EnrollStudentAsync(EnrollStudentDTO dto, CancellationToken ct)
@@ -78,16 +118,32 @@ public class CourseInstanceService(
         await courseInstanceRepository.UpdateAsync(courseInstance, courseInstance.RowVersion, ct);
     }
 
-    public async Task DeleteCourseInstanceAsync(Guid id, CancellationToken ct)
+    public async Task UpdateEnrollmentStatusAsync(
+        UpdateEnrollmentStatusDTO dto,
+        CancellationToken ct)
     {
-        var courseInstanceId = new CourseInstanceId(id);
+        var courseInstance = await courseInstanceRepository.GetByIdAsync(
+            new CourseInstanceId(dto.CourseInstanceId), ct) ??
+            throw new ArgumentException($"CourseInstance with id {dto.CourseInstanceId} was not found.");
 
-        var deleted = await courseInstanceRepository.DeleteAsync(courseInstanceId, ct);
+        var enrollment = courseInstance.Enrollments.FirstOrDefault(e => e.Id.Value == dto.EnrollmentId) ??
+            throw new ArgumentException($"Enrollment with id {dto.EnrollmentId} was not found in course instance {dto.CourseInstanceId}.");
 
-        if (!deleted)
-            throw new ArgumentException($"CourseInstance with id {id} was not found.");
+        switch(dto.NewStatus)
+        {
+            case EnrollmentStatus.Confirmed:
+                courseInstance.ConfirmEnrollment(enrollment);
+                break;
+            case EnrollmentStatus.Cancelled:
+                courseInstance.CancelEnrollment(enrollment);
+                break;
+            default:
+                throw new ArgumentException("Invalid enrollment status.");
+        }
+
+        await courseInstanceRepository.UpdateAsync(courseInstance, courseInstance.RowVersion, ct);
     }
-    
+
     private static CourseInstanceDTO MapToDTO(CourseInstance courseInstance)
     {
         var locationGuid = courseInstance.LocationId.Value;
@@ -98,7 +154,11 @@ public class CourseInstanceService(
             StartDate = courseInstance.StartDate,
             EndDate = courseInstance.EndDate,
             Capacity = courseInstance.Capacity,
-            LocationId = locationGuid
+            CourseCode = courseInstance.CourseCode,
+            RowVersion = courseInstance.RowVersion,
+            Location = LocationService.MapToDTO(courseInstance.Location),
+            Course = CourseService.MapToDTO(courseInstance.Course),
+            Instructors = [.. courseInstance.Instructors.Select(ParticipantService.MapToDTO)]
         };
     }
 }

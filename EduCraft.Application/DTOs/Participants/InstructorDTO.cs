@@ -6,5 +6,5 @@ namespace EduCraft.Application.DTOs.Participants;
 public record InstructorDTO : ParticipantDTO
 {
     [JsonPropertyOrder(100)]
-    public List<CompetenceDTO> Comptetences { get; init; } = [];
+    public List<CompetenceDTO> Competences { get; init; } = [];
 }

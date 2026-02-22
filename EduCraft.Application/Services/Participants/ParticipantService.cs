@@ -1,17 +1,19 @@
 ﻿using EduCraft.Application.DTOs.Competences;
+using EduCraft.Application.DTOs.CourseInstances;
 using EduCraft.Application.DTOs.Participants;
 using EduCraft.Application.Interfaces;
 using EduCraft.Domain.Entities.Courses;
 using EduCraft.Domain.Entities.Participants;
 using EduCraft.Domain.Interfaces;
+using System.Security.Cryptography.X509Certificates;
 
 namespace EduCraft.Application.Services.Participants;
 
 public class ParticipantService(
-    IParticipantRepository repository, 
+    IParticipantRepository repository,
     IParticipantQueries queries,
-    ICompetenceRepository competenceRepository 
-    ): IParticipantService
+    ICompetenceRepository competenceRepository
+    ) : IParticipantService
 {
     public async Task<ParticipantDTO> CreateParticipantAsync(CreateParticipantDTO dto, CancellationToken ct)
     {
@@ -25,7 +27,7 @@ public class ParticipantService(
 
         await repository.AddAsync(participant, ct);
 
-        return MapToDTO([participant]).First();
+        return MapToDTO(participant);
     }
     public async Task<bool> ExistsByEmailAsync(string email, CancellationToken ct)
     {
@@ -36,17 +38,32 @@ public class ParticipantService(
     {
         var participants = await queries.GetAllAsync(ct);
 
-        return MapToDTO(participants);
+        return MapToDTOList(participants);
+    }
+
+    public async Task<IEnumerable<ParticipantDTO>> GetAllStudentsAsync(CancellationToken ct)
+    {
+        var students = await queries.GetAllStudentsAsync(ct);
+
+        return MapToDTOList(students).OfType<StudentDTO>();
+    }
+
+    public async Task<IEnumerable<ParticipantDTO>> GetAllInstructorsAsync(CancellationToken ct)
+    {
+        var instructors = await queries.GetAllInstructorsAsync(ct);
+
+        return MapToDTOList(instructors);
     }
 
     public async Task<ParticipantDTO> GetParticipantByIdAsync(Guid id, CancellationToken ct)
     {
         var participantId = new ParticipantId(id);
 
-        var participant = await repository.GetByIdAsync(participantId, ct) ?? 
-            throw new ArgumentException($"Participant with id {id} was not found.");
+        var participant = (Participant?)await repository.GetInstructorWithCompetenceAsync(participantId, ct)
+            ?? await repository.GetByIdAsync(participantId, ct)
+            ?? throw new ArgumentException($"Participant with id {id} was not found.");
 
-        return MapToDTO([participant]).First();
+        return MapToDTO(participant);
     }
 
     public async Task<ParticipantDTO> UpdateParticipantAsync(
@@ -56,42 +73,39 @@ public class ParticipantService(
     {
         var participantId = new ParticipantId(id);
 
-        var participant = await repository.GetByIdAsync(participantId, ct) ?? 
-            throw new ArgumentException($"Participant with id {id} was not found.");
+        var participant = await repository.GetByIdAsync(participantId, ct) ??
+        throw new ArgumentException($"Participant with id {id} was not found.");
 
-        var exists = await repository.ExistsByEmailAsync(dto.Email, ct);
-
-        if (exists && participant.Email != dto.Email)
-            throw new InvalidOperationException("Email already exists");
+        if (dto.Email != null && participant.Email != dto.Email)
+        {
+            var exists = await repository.ExistsByEmailAsync(dto.Email, ct);
+            if (exists)
+                throw new InvalidOperationException("Email already exists");
+        }
 
         participant.Update(
-            dto.FirstName,
-            dto.LastName,
-            dto.Email,
+            dto.FirstName ?? string.Empty,
+            dto.LastName ?? string.Empty,
+            dto.Email ?? string.Empty,
             dto.PhoneNumber
         );
 
         await repository.UpdateAsync(participant, dto.RowVersion, ct);
 
-        return MapToDTO([participant]).First();
+        return MapToDTO(participant);
     }
 
     public async Task AddCompetenceToInstructorAsync(
-        Guid instructorId, 
-        Guid competenceId, 
+        Guid instructorId,
+        Guid competenceId,
         CancellationToken ct)
     {
-        var participant = await repository.GetByIdAsync(new ParticipantId(instructorId), ct);
-
-        if (participant is null)
+        var instructor = await repository.GetInstructorWithCompetenceAsync(
+            new ParticipantId(instructorId), ct) ??
             throw new ArgumentException("Instructor not found.");
 
-        if (participant is not Instructor instructor)
-            throw new InvalidOperationException("Participant is not an instructor.");
-
-        var competence = await competenceRepository.GetByIdAsync(new CompetenceId(competenceId), ct);
-
-        if (competence is null)
+        var competence = await competenceRepository.GetByIdAsync(
+            new CompetenceId(competenceId), ct) ??
             throw new ArgumentException("Competence not found");
 
         instructor.AddCompetence(competence);
@@ -114,9 +128,10 @@ public class ParticipantService(
             throw new ArgumentException($"Participant with id {id} was not found.");
     }
 
-    private static IEnumerable<ParticipantDTO> MapToDTO(IEnumerable<Participant> participants)
+    public static ParticipantDTO MapToDTO(Participant p)
     {
-        return participants.Select(p => p switch
+        //return participants.Select(p => p switch
+        return p switch
         {
             Instructor i => new InstructorDTO
             {
@@ -127,8 +142,15 @@ public class ParticipantService(
                 PhoneNumber = i.PhoneNumber,
                 Role = i.Role,
                 RowVersion = i.RowVersion,
+                Competences = [.. i.Competences.Select(c => new CompetenceDTO
+                {
+                    Id = c.Id.Value,
+                    CompetenceName = c.CompetenceName,
+                    RowVersion = c.RowVersion
+                })]
             },
-            _ => new ParticipantDTO
+
+            _ => new StudentDTO
             {
                 Id = p.Id.Value,
                 FirstName = p.FirstName,
@@ -137,14 +159,33 @@ public class ParticipantService(
                 PhoneNumber = p.PhoneNumber,
                 Role = p.Role,
                 RowVersion = p.RowVersion,
+                //Enrollments = p.Enrollments.Select(e => new EnrollmentDTO
+                //{
+                //    Id = e.Id.Value,
+                //    Status = e.Status.ToString(),
+                //    CourseInstanceId = e.CourseInstanceId.Value,
+                //    //CourseCode = e.CourseInstance.CourseCode,
+                //    //StartDate = e.CourseInstance.StartDate,
+                //    //EndDate = e.CourseInstance.EndDate
+                //}).ToList()
+
             }
-        });
+
+            //_ => new ParticipantDTO
+            //{
+            //    Id = p.Id.Value,
+            //    FirstName = p.FirstName,
+            //    LastName = p.LastName,
+            //    Email = p.Email,
+            //    PhoneNumber = p.PhoneNumber,
+            //    Role = p.Role,
+            //    RowVersion = p.RowVersion,
+            //}
+        };
     }
 
-    public async Task<IEnumerable<ParticipantDTO>> GetAllStudentsAsync(CancellationToken ct)
+    public static IEnumerable<ParticipantDTO> MapToDTOList(IEnumerable<Participant> participants)
     {
-        var students = await queries.GetAllStudentsAsync(ct);
-
-        return MapToDTO(students);
+        return participants.Select(MapToDTO);
     }
 }

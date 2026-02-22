@@ -8,6 +8,8 @@ public interface ICourseService
 
     Task<IEnumerable<CourseDTO>> GetAllCoursesAsync(CancellationToken ct);
 
+    Task<CourseDTO> GetCourseByIdAsync(Guid id, CancellationToken ct);
+
     Task<CourseDTO> UpdateCourseAsync(
         Guid id, 
         UpdateCourseDTO dto, 

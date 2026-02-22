@@ -1,4 +1,5 @@
 ﻿using EduCraft.Application.DTOs.Competences;
+using EduCraft.Application.DTOs.Courses;
 using EduCraft.Application.Interfaces;
 using EduCraft.Domain.Entities.Courses;
 using EduCraft.Domain.Interfaces;
@@ -23,6 +24,16 @@ public class CompetenceService(ICompetenceRepository repository) : ICompetenceSe
         var competences = await repository.GetAllAsync(ct);
 
         return [.. competences.Select(MapToDTO)];
+    }
+
+    public async Task<CompetenceDTO> GetCompetenceByIdAsync(Guid id, CancellationToken ct)
+    {
+        var competenceId = new CompetenceId(id);
+
+        var competence = await repository.GetByIdAsync(competenceId, ct) ??
+            throw new ArgumentException($"Competence with id {id} was not found.");
+
+        return MapToDTO(competence);
     }
 
     public async Task<CompetenceDTO> UpdateCompetenceAsync(
@@ -59,7 +70,7 @@ public class CompetenceService(ICompetenceRepository repository) : ICompetenceSe
     {
         return new CompetenceDTO
         {
-            Id = competence.Id,
+            Id = competence.Id.Value,
             CompetenceName = competence.CompetenceName,
             RowVersion = competence.RowVersion,
         };

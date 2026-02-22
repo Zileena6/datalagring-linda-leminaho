@@ -11,6 +11,8 @@ public interface IParticipantService
 
     Task<IEnumerable<ParticipantDTO>> GetAllStudentsAsync(CancellationToken ct);
 
+    Task<IEnumerable<ParticipantDTO>> GetAllInstructorsAsync(CancellationToken ct);
+
     Task<ParticipantDTO> GetParticipantByIdAsync(Guid id, CancellationToken ct);
 
     Task<bool> ExistsByEmailAsync(string email, CancellationToken ct);
