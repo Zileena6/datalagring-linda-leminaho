@@ -1,6 +1,4 @@
-﻿using EduCraft.Domain.Entities.Courses;
-
-namespace EduCraft.Application.DTOs.Courses;
+﻿namespace EduCraft.Application.DTOs.Courses;
 
 public class CourseDTO
 {

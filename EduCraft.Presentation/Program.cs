@@ -4,13 +4,18 @@ using EduCraft.Application.DTOs.Courses;
 using EduCraft.Application.DTOs.Locations;
 using EduCraft.Application.DTOs.Participants;
 using EduCraft.Application.Interfaces;
-using EduCraft.Application.Services;
+using EduCraft.Application.Services.Competences;
+using EduCraft.Application.Services.CourseInstances;
+using EduCraft.Application.Services.Courses;
+using EduCraft.Application.Services.Locations;
 using EduCraft.Application.Services.Participants;
 using EduCraft.Domain.Interfaces;
 using EduCraft.Infrastructure;
 using EduCraft.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -35,6 +40,14 @@ builder.Services.AddScoped<ICourseInstanceService, CourseInstanceService>();
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddValidation();
+
+var enumConverter = new JsonStringEnumConverter();
+
+builder.Services.Configure<JsonOptions>(options =>
+{
+    options.SerializerOptions.Converters.Add(enumConverter);
+});
+
 
 builder.Services.AddCors(options =>
 {

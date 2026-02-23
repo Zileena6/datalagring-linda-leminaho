@@ -1,10 +1,9 @@
 ﻿using EduCraft.Application.DTOs.Competences;
-using EduCraft.Application.DTOs.Courses;
 using EduCraft.Application.Interfaces;
 using EduCraft.Domain.Entities.Courses;
 using EduCraft.Domain.Interfaces;
 
-namespace EduCraft.Application.Services;
+namespace EduCraft.Application.Services.Competences;
 
 public class CompetenceService(ICompetenceRepository repository) : ICompetenceService
 {

@@ -1,6 +1,4 @@
-﻿using EduCraft.Domain.Entities.Courses;
-
-namespace EduCraft.Application.DTOs.Competences;
+﻿namespace EduCraft.Application.DTOs.Competences;
 
 public record CompetenceDTO
 {

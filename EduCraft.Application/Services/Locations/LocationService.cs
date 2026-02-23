@@ -3,7 +3,7 @@ using EduCraft.Application.Interfaces;
 using EduCraft.Domain.Entities.Locations;
 using EduCraft.Domain.Interfaces;
 
-namespace EduCraft.Application.Services;
+namespace EduCraft.Application.Services.Locations;
 
 public class LocationService(ILocationRepository repository) : ILocationService
 {
