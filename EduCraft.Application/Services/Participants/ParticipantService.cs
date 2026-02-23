@@ -1,11 +1,9 @@
 ﻿using EduCraft.Application.DTOs.Competences;
-using EduCraft.Application.DTOs.CourseInstances;
 using EduCraft.Application.DTOs.Participants;
 using EduCraft.Application.Interfaces;
 using EduCraft.Domain.Entities.Courses;
 using EduCraft.Domain.Entities.Participants;
 using EduCraft.Domain.Interfaces;
-using System.Security.Cryptography.X509Certificates;
 
 namespace EduCraft.Application.Services.Participants;
 
@@ -130,7 +128,6 @@ public class ParticipantService(
 
     public static ParticipantDTO MapToDTO(Participant p)
     {
-        //return participants.Select(p => p switch
         return p switch
         {
             Instructor i => new InstructorDTO
@@ -168,19 +165,7 @@ public class ParticipantService(
                 //    //StartDate = e.CourseInstance.StartDate,
                 //    //EndDate = e.CourseInstance.EndDate
                 //}).ToList()
-
             }
-
-            //_ => new ParticipantDTO
-            //{
-            //    Id = p.Id.Value,
-            //    FirstName = p.FirstName,
-            //    LastName = p.LastName,
-            //    Email = p.Email,
-            //    PhoneNumber = p.PhoneNumber,
-            //    Role = p.Role,
-            //    RowVersion = p.RowVersion,
-            //}
         };
     }
 

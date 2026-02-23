@@ -3,7 +3,7 @@ using EduCraft.Application.Interfaces;
 using EduCraft.Domain.Entities.Courses;
 using EduCraft.Domain.Interfaces;
 
-namespace EduCraft.Application.Services;
+namespace EduCraft.Application.Services.Courses;
 
 public class CourseService(ICourseRepository repository) : ICourseService
 {   

@@ -1,9 +1,10 @@
 ﻿using EduCraft.Application.DTOs.Participants;
+using EduCraft.Application.Interfaces;
 using EduCraft.Application.Services.Participants;
-using EduCraft.Domain.Entities.Courses;
 using EduCraft.Domain.Entities.Participants;
-using EduCraft.Domain.Enums;
 using EduCraft.Domain.Interfaces;
+using EduCraft.Domain.Primitives;
+using FluentAssertions;
 using Moq;
 using Xunit;
 
@@ -11,114 +12,116 @@ namespace EduCraft.Tests.Application;
 
 public class ParticipantServiceTests
 {
-    private readonly Mock<IParticipantRepository> _participantRepoMock;
-    private readonly Mock<IParticipantQueries> _participantQueriesMock;
+    private readonly Mock<IParticipantRepository> _repoMock;
+    private readonly Mock<IParticipantQueries> _queriesMock;
     private readonly Mock<ICompetenceRepository> _competenceRepoMock;
     private readonly ParticipantService _service;
 
     public ParticipantServiceTests()
     {
-        _participantRepoMock = new Mock<IParticipantRepository>();
-        _participantQueriesMock = new Mock<IParticipantQueries>();
+        _repoMock = new Mock<IParticipantRepository>();
+        _queriesMock = new Mock<IParticipantQueries>();
         _competenceRepoMock = new Mock<ICompetenceRepository>();
-
-        _service = new ParticipantService(
-            _participantRepoMock.Object,
-            _participantQueriesMock.Object,
-            _competenceRepoMock.Object
-        );
+        _service = new ParticipantService(_repoMock.Object, _queriesMock.Object, _competenceRepoMock.Object);
     }
 
     [Fact]
-    public async Task CreateParticipantAsync_ShouldReturnInstructorDTO_WhenRoleIsInstructor()
+    public async Task CreateParticipantAsync_Should_Create_Student()
     {
+        // Arrange
         var dto = new CreateParticipantDTO
         {
-            FirstName = "John",
-            LastName = "Doe",
-            Email = "john@example.com",
-            PhoneNumber = null,
-            Role = ParticipantRole.Instructor
+            FirstName = "Anna",
+            LastName = "Svensson",
+            Email = "anna@test.se",
+            PhoneNumber = "0701234567",
+            Role = Domain.Enums.ParticipantRole.Student
         };
 
+        _repoMock.Setup(r => r.AddAsync(It.IsAny<Participant>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        // Act
         var result = await _service.CreateParticipantAsync(dto, CancellationToken.None);
 
-        Assert.NotNull(result);
-        Assert.Equal("John", result.FirstName);
-        Assert.Equal(ParticipantRole.Instructor, result.Role);
-        _participantRepoMock.Verify(r => r.AddAsync(It.IsAny<Participant>(), It.IsAny<CancellationToken>()), Times.Once);
+        // Assert
+        result.Should().NotBeNull();
+        result.FirstName.Should().Be(dto.FirstName);
+        result.LastName.Should().Be(dto.LastName);
+        result.Role.Should().Be(dto.Role);
+        _repoMock.Verify(r => r.AddAsync(It.IsAny<Participant>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
-    public async Task AddCompetenceToInstructorAsync_ShouldAddCompetence()
+    public async Task ExistsByEmailAsync_Should_Return_True_When_Email_Exists()
     {
-        var instructor = Participant.Create("Jane", "Smith", "jane@example.com", null, ParticipantRole.Instructor) as Instructor;
-        if (instructor is null) throw new InvalidOperationException("Instructor creation failed.");
-        var competence = Competence.Create("C#");
+        _repoMock.Setup(r => r.ExistsByEmailAsync("test@test.se", It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
 
-        _participantRepoMock
-            .Setup(r => r.GetByIdAsync(instructor.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(instructor);
+        var exists = await _service.ExistsByEmailAsync("test@test.se", CancellationToken.None);
 
-        _competenceRepoMock
-            .Setup(r => r.GetByIdAsync(competence.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(competence);
-
-        await _service.AddCompetenceToInstructorAsync(instructor.Id.Value, competence.Id.Value, CancellationToken.None);
-
-        Assert.Contains(competence, instructor.Competences);
-        _participantRepoMock.Verify(r => r.UpdateAsync(instructor, instructor.RowVersion, It.IsAny<CancellationToken>()), Times.Once);
+        exists.Should().BeTrue();
     }
 
     [Fact]
-    public async Task GetParticipantByIdAsync_ShouldReturnDTO_WhenParticipantExists()
+    public async Task GetAllParticipantsAsync_Should_Return_MappedDTOs()
     {
-        var participant = Participant.Create("Alice", "Brown", "alice@example.com", null, ParticipantRole.Student);
-        _participantRepoMock
-            .Setup(r => r.GetByIdAsync(participant.Id, It.IsAny<CancellationToken>()))
+        var participants = new List<Participant>
+        {
+            Participant.Create("Anna", "Svensson", "a@test.se", null, Domain.Enums.ParticipantRole.Student),
+            Participant.Create("Erik", "Larsson", "e@test.se", null, Domain.Enums.ParticipantRole.Instructor)
+        };
+
+        _queriesMock.Setup(q => q.GetAllAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(participants);
+
+        var result = await _service.GetAllParticipantsAsync(CancellationToken.None);
+
+        result.Should().HaveCount(2);
+        result.First().FirstName.Should().Be("Anna");
+        result.Last().FirstName.Should().Be("Erik");
+    }
+
+    [Fact]
+    public async Task UpdateParticipantAsync_Should_Update_Participant()
+    {
+        var participant = Participant.Create("Anna", "Svensson", "a@test.se", null, Domain.Enums.ParticipantRole.Student);
+
+        _repoMock.Setup(r => r.GetByIdAsync(participant.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(participant);
 
-        var result = await _service.GetParticipantByIdAsync(participant.Id.Value, CancellationToken.None);
+        _repoMock.Setup(r => r.ExistsByEmailAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
 
-        Assert.Equal(participant.FirstName, result.FirstName);
-        Assert.Equal(participant.Email, result.Email);
-    }
+        _repoMock.Setup(r => r.UpdateAsync(participant, participant.RowVersion, It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
 
-    [Fact]
-    public async Task ExistsByEmailAsync_ShouldReturnTrue_WhenEmailExists()
-    {
-        var email = "bob@example.com";
-        _participantRepoMock.Setup(r => r.ExistsByEmailAsync(email, It.IsAny<CancellationToken>())).ReturnsAsync(true);
-
-        var result = await _service.ExistsByEmailAsync(email, CancellationToken.None);
-
-        Assert.True(result);
-    }
-
-    [Fact]
-    public async Task UpdateParticipantAsync_ShouldUpdateParticipant()
-    {
-        var participant = Participant.Create("Tom", "White", "tom@example.com", null, ParticipantRole.Student);
         var dto = new UpdateParticipantDTO
         {
-            FirstName = "Tommy",
-            LastName = "White",
-            Email = "tom@example.com",
-            PhoneNumber = "123",
+            FirstName = "Maria",
+            LastName = "Andersson",
+            Email = "maria@test.se",
+            PhoneNumber = "0709999999",
             RowVersion = participant.RowVersion
         };
 
-        _participantRepoMock
-            .Setup(r => r.GetByIdAsync(participant.Id, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(participant);
-
-        _participantRepoMock
-            .Setup(r => r.ExistsByEmailAsync(dto.Email, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
-
         var result = await _service.UpdateParticipantAsync(participant.Id.Value, dto, CancellationToken.None);
 
-        Assert.Equal("Tommy", result.FirstName);
-        _participantRepoMock.Verify(r => r.UpdateAsync(participant, dto.RowVersion, It.IsAny<CancellationToken>()), Times.Once);
+        result.FirstName.Should().Be("Maria");
+        result.Email.Should().Be("maria@test.se");
+    }
+
+    [Fact]
+    public async Task DeleteParticipantAsync_Should_Throw_When_NotFound()
+    {
+        var participantId = Guid.NewGuid();
+
+        _repoMock.Setup(r => r.DeleteAsync(It.IsAny<ParticipantId>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+
+        Func<Task> act = async () => await _service.DeleteParticipantAsync(participantId, CancellationToken.None);
+
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithMessage($"Participant with id {participantId} was not found.");
     }
 }

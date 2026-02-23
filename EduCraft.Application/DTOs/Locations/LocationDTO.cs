@@ -1,6 +1,4 @@
-﻿using EduCraft.Domain.Entities.Locations;
-
-namespace EduCraft.Application.DTOs.Locations;
+﻿namespace EduCraft.Application.DTOs.Locations;
 
 public record LocationDTO
 {

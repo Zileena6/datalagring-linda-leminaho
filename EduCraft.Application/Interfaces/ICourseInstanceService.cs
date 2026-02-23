@@ -1,5 +1,4 @@
 ﻿using EduCraft.Application.DTOs.CourseInstances;
-using EduCraft.Domain.Enums;
 
 namespace EduCraft.Application.Interfaces;
 

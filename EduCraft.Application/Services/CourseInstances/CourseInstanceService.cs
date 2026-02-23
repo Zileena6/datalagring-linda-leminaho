@@ -1,5 +1,7 @@
 ﻿using EduCraft.Application.DTOs.CourseInstances;
 using EduCraft.Application.Interfaces;
+using EduCraft.Application.Services.Courses;
+using EduCraft.Application.Services.Locations;
 using EduCraft.Application.Services.Participants;
 using EduCraft.Domain.Entities.CourseInstances;
 using EduCraft.Domain.Entities.Locations;
@@ -7,7 +9,7 @@ using EduCraft.Domain.Entities.Participants;
 using EduCraft.Domain.Enums;
 using EduCraft.Domain.Interfaces;
 
-namespace EduCraft.Application.Services;
+namespace EduCraft.Application.Services.CourseInstances;
 
 public class CourseInstanceService(
     ICourseInstanceRepository courseInstanceRepository,

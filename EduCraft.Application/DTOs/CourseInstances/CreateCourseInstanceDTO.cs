@@ -1,6 +1,4 @@
-﻿using EduCraft.Application.DTOs.Courses;
-
-namespace EduCraft.Application.DTOs.CourseInstances;
+﻿namespace EduCraft.Application.DTOs.CourseInstances;
 
 public record CreateCourseInstanceDTO
 {
