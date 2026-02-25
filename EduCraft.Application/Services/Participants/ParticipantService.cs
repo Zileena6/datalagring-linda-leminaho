@@ -94,27 +94,28 @@ public class ParticipantService(
     }
 
     public async Task AddCompetenceToInstructorAsync(
-        Guid instructorId,
-        Guid competenceId,
-        CancellationToken ct)
+    AddCompetenceDTO dto,
+    CancellationToken ct)
     {
         var instructor = await repository.GetInstructorWithCompetenceAsync(
-            new ParticipantId(instructorId), ct) ??
-            throw new ArgumentException("Instructor not found.");
+            new ParticipantId(dto.ParticipantId), ct)
+            ?? throw new ArgumentException("Instructor not found");
 
         var competence = await competenceRepository.GetByIdAsync(
-            new CompetenceId(competenceId), ct) ??
-            throw new ArgumentException("Competence not found");
+            new CompetenceId(dto.CompetenceId), ct)
+            ?? throw new ArgumentException("Competence not found");
 
         instructor.AddCompetence(competence);
 
-        await repository.UpdateAsync(instructor, instructor.RowVersion, ct);
+        var rowVersionBytes = Convert.FromBase64String(dto.RowVersion);
+        await repository.UpdateAsync(instructor, rowVersionBytes, ct);
     }
 
-    public async Task AddCompetenceToInstructorAsync(AddCompetenceDTO dto, CancellationToken ct)
-    {
-        await AddCompetenceToInstructorAsync(dto.InstructorId, dto.CompetenceId, ct);
-    }
+
+    //public async Task AddCompetenceToInstructorAsync(AddCompetenceDTO dto, CancellationToken ct)
+    //{
+    //    await AddCompetenceToInstructorAsync(dto.InstructorId, dto.CompetenceId, ct);
+    //}
 
     public async Task DeleteParticipantAsync(Guid id, CancellationToken ct)
     {
@@ -139,6 +140,7 @@ public class ParticipantService(
                 PhoneNumber = i.PhoneNumber,
                 Role = i.Role,
                 RowVersion = i.RowVersion,
+                CreatedAt = p.CreatedAt,
                 Competences = [.. i.Competences.Select(c => new CompetenceDTO
                 {
                     Id = c.Id.Value,
@@ -156,6 +158,7 @@ public class ParticipantService(
                 PhoneNumber = p.PhoneNumber,
                 Role = p.Role,
                 RowVersion = p.RowVersion,
+                CreatedAt = p.CreatedAt,
                 //Enrollments = p.Enrollments.Select(e => new EnrollmentDTO
                 //{
                 //    Id = e.Id.Value,

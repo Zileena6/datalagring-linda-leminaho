@@ -23,11 +23,10 @@ public interface IParticipantService
         CancellationToken ct);
 
     Task AddCompetenceToInstructorAsync(
-        Guid instructorId, 
-        Guid competenceId, 
+        AddCompetenceDTO dto, 
         CancellationToken ct);
 
-    Task AddCompetenceToInstructorAsync(AddCompetenceDTO dto, CancellationToken ct);
+    //Task AddCompetenceToInstructorAsync(AddCompetenceDTO dto, CancellationToken ct);
 
     Task DeleteParticipantAsync(Guid id, CancellationToken ct);
 }

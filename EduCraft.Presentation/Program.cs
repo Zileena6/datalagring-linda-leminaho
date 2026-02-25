@@ -123,8 +123,8 @@ participants.MapPatch("/{id:guid}", async (
     CancellationToken ct
 ) =>
 {
-    await service.UpdateParticipantAsync(id, dto, ct);
-    return Results.Ok();
+    var updated = await service.UpdateParticipantAsync(id, dto, ct);
+    return Results.Ok(updated);
 });
 
 participants.MapDelete("/{id:guid}", async (
@@ -221,8 +221,8 @@ competences.MapPatch("/{id:guid}", async (
     CancellationToken ct
 ) =>
 {
-    await service.UpdateCompetenceAsync(id, dto, ct);
-    return Results.Ok();
+    var updated = await service.UpdateCompetenceAsync(id, dto, ct);
+    return Results.Ok(updated);
 });
 
 competences.MapDelete("/{id:guid}", async (
