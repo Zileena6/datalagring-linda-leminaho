@@ -1,7 +1,8 @@
 ﻿namespace EduCraft.Application.DTOs.Competences;
 
-public class AddCompetenceDTO
+public record AddCompetenceDTO
 {
-    public Guid InstructorId { get; set; }
-    public Guid CompetenceId { get; set; }
+    public Guid ParticipantId { get; init; }
+    public Guid CompetenceId { get; init; }
+    public string RowVersion { get; init; } = default!;
 }
